@@ -1,0 +1,37 @@
+---
+- name: Create a Branch Using GitHub API
+  hosts: localhost
+  vars:
+    github_username: "vishnuteja407"
+    github_repo: "Ansible_devops"
+    github_token: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"
+    base_branch: "develop"  
+    new_branch: "feature/ansible-develop"  
+  tasks:
+    - name: Get the SHA of the Base Branch
+      uri:
+        url: "https://api.github.com/repos/{{ github_username }}/{{ github_repo }}/git/refs/heads/{{ base_branch }}"
+        method: GET
+        headers:
+          Authorization: "token {{ github_token }}"
+      register: base_branch_info
+
+    - name: Set the Base Branch SHA
+      set_fact:
+        base_branch_sha: "{{ base_branch_info.json.object.sha }}"
+    
+    - name: Create a New Branch
+      uri:
+        url: "https://api.github.com/repos/{{ github_username }}/{{ github_repo }}/git/refs"
+        method: POST
+        headers:
+          Authorization: "token {{ github_token }}"
+        body: '{"ref": "refs/heads/{{ new_branch }}","sha": "{{ base_branch_sha }}" }'
+        body_format: json
+      register: response
+      failed_when: response.status not in [200, 201, 204]
+
+    - name: Debug Response
+      debug:
+        var: response
+

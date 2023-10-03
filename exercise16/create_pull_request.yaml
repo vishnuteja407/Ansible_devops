@@ -1,0 +1,28 @@
+---
+- name: Create Pull Request
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Set GitHub Personal Access Token (PAT)
+      set_fact:
+        github_token: "{{ lookup('env', 'PULL_REQUEST_KEY') }}"
+
+    - name: Create Pull Request
+      uri:
+        url: "https://github.com/vishnuteja407/Ansible_devops/pulls"
+        method: POST
+        headers:
+          Authorization: "token {{ github_token }}"
+          Accept: "application/vnd.github+json"
+        body_format: json
+        body:
+          title: "Merge develop branch with main"
+          head: "develop"
+          base: "main"
+      register: result
+      failed_when: result.status not in [200, 201, 204]
+
+    - name: Debug Pull Request Response
+      debug:
+        var: result
+

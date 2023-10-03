@@ -1,0 +1,28 @@
+---
+- name: Change Default Branch
+  hosts: localhost
+  vars:
+    github_username: "vishnuteja407"
+    github_repo: "Ansible_devops"
+    new_default_branch: "develop"
+    github_token: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"
+  tasks:
+    - name: Set the new default branch
+      uri:
+        url: "https://api.github.com/repos/{{ github_username }}/{{ github_repo }}"
+        method: PATCH
+        headers:
+          Authorization: "token {{ github_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body: '{"default_branch": "{{ new_default_branch }}" }'
+        status_code: 200
+      register: response
+
+    - name: Check if branch change was successful
+      assert:
+        that:
+          - response.json.default_branch == "{{ new_default_branch }}"
+        success_msg: "Default branch updated successfully."
+      when: response.status == 200
+

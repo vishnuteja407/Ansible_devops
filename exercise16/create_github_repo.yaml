@@ -1,0 +1,32 @@
+---
+- name: Create GitHub Repository
+  hosts: localhost
+  gather_facts: no
+  vars:
+    github_token: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"  # Assuming you've set the token as an environment variable
+
+  tasks:
+ 
+#    - name: Check Github token
+#      debug:
+#        var: github_token
+
+    - name: Create GitHub Repository
+      uri:
+        url: https://api.github.com/user/repos
+        method: POST
+        headers:
+          Authorization: "token {{ github_token }}"
+        body_format: json
+        body:
+          name: Ansible_devops
+          description: Devops Ansible course practice
+          private: false
+          auto_init: true
+        return_content: yes
+      register: response
+      failed_when: response.status not in [200, 201, 204]
+
+    - debug:
+        var: response
+

@@ -1,0 +1,24 @@
+all:
+  hosts:
+    web01:
+      ansible_host: 192.168.10.22
+    web02:
+      ansible_host: 192.168.10.23
+    db01:
+      ansible_host: 192.168.10.24
+
+  children:
+    webservers:
+      hosts:
+        web01:
+        web02:
+    dbservers:
+      hosts:
+        db01:
+    dc_oregon:
+      children:
+        webservers:
+        dbservers:
+      vars:
+        ansible_user: vagrant
+        ansible_ssh_private_key_file: /home/vagrant/.ssh/id_rsa

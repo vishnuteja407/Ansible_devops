@@ -1,0 +1,124 @@
+---
+- name: Git Setup on Ubuntu
+  hosts: localhost
+  become: yes  # To run tasks with sudo
+  vars:
+    git_repo: "https://github.com/vishnuteja407/Ansible_devops.git"
+    dir_path: "/home/vagrant/vprofile"
+  tasks:
+    - name: Update APT package cache
+      apt:
+        update_cache: yes
+
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+
+    - name: Initialize git
+      ansible.builtin.command: git init
+      args:
+        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+      ignore_errors: yes
+      register: result
+ 
+    - name: Debug current working directory
+      debug:
+        msg: "{{ ansible_env.PWD }}"
+
+    - name: Check untracked files
+      ansible.builtin.command: git status
+      args:
+        chdir: "{{ dir_path }}"
+      register: untracked_files
+
+    - name: Display the untracked files
+      debug:
+        var: untracked_files
+   
+    - name: Rename default branch from master to main
+      ansible.builtin.command: git branch -M main
+      args:
+        chdir: "{{ dir_path }}"
+      ignore_errors: yes
+
+    - name: Checkout to develop branch
+      ansible.builtin.command: git checkout -b develop
+      args:
+        chdir: "{{ dir_path }}"
+      ignore_errors: yes
+      register: git_checkout
+
+    - name: Debug git checkout
+      debug:
+        var: git_checkout
+
+    - name: Add all files to Git
+      ansible.builtin.command: git add .
+      args:
+        chdir: "{{ dir_path }}" 
+      ignore_errors: yes
+
+    - name: Commit changes
+      ansible.builtin.command: git commit -m "Ansible Practice"
+      args:
+        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+      ignore_errors: yes
+
+    - name: Remove existing 'origin' remote (optional)
+      ansible.builtin.command: git remote remove origin
+      args:
+        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+      ignore_errors: yes
+
+    - name: Add 'origin' remote
+      ansible.builtin.command: git remote add origin "{{ git_repo }}"
+      args:
+        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+      ignore_errors: yes
+
+    - name: Push to 'develop' branch
+      ansible.builtin.command: git push -u origin develop
+      args:
+        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+      ignore_errors: yes
+
+#    - name: Initialize a Git Repository Locally
+#      shell: 
+#        cmd: "{{ item }}"
+#      loop:
+#        - git init
+#        - git add .
+#        - git commit -m "Ansible Practice"
+#        - git branch -M main
+#        - git remote add origin "{{ git_repo }}"
+#        - git push -u origin main
+#      args:
+#        chdir: /home/vagrant/vprofile
+#      register: result       
+
+#    - name: Add Remote to Git Repository
+#      shell: git remote add origin "{{ git_repo }}"
+#      args:
+#        chdir: /home/vagrant/vprofile
+#      register: result
+
+#    - name: Check git result
+#      debug:
+#        var: result
+
+#    - name: Clone the GitHub repository
+#      github_repository:
+#        user: vishnuteja407
+#        name: "{{ git_repo }}"
+#        dest: /home/vagrant/vprofile
+#        ssh_key_file: ~/.ssh/id_rsa
+#      register: repo_clone
+
+
+#    - name: Clone or update git repo
+#      git:
+#        repo: "{{ git_repo }}"
+#        dest: /home/vagrant/vprofile
+#        version: master
+#        accept_hostkey: yes

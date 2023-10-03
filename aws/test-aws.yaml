@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  gather_facts: False
+  tasks:
+    - name: Create Key pair
+      ec2_key:
+        name: sample
+        region: us-east-1
+      register: keyout
+    
+#    - name: Print key
+#      debug:
+#       var: keyout
+
+    - name: Save key
+      copy:
+        content: "{{keyout.key.private_key}}"
+        dest: ./sample.pem
+      when: keyout.changed
+   
+    - name: start an instance
+      amazon.aws.ec2_instance:
+        name: "public-compute-instance"
+        key_name: "sample"
+        #vpc_subnet_id: subnet-5ca1ab1e
+        instance_type: t2.micro
+        security_group: default
+        #network:
+        #  assign_public_ip: true
+        image_id: ami-053b0d53c279acc90
+        exact_count: 1
+        region: us-east-1
+        tags:
+          Environment: Testing

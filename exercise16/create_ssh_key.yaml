@@ -1,0 +1,44 @@
+---
+- name: Generate SSH Key Pair
+  hosts: localhost
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_ACCESS_KEY') }}"
+    github_user: vishnuteja407
+  tasks:
+    - name: Check If SSH Keys Exist
+      stat:
+        path: ~/.ssh/id_rsa.pub
+      register: keyout
+
+    - name: Generate SSH Key Pair
+      command: ssh-keygen -t rsa -b 4096
+      when: not (keyout.stat.exists | bool)
+
+    - name: Read SSH Public Key
+      ansible.builtin.shell: cat ~/.ssh/id_rsa.pub
+      register: ssh_public_key
+
+    - name: Add SSH Key to GitHub
+      uri:
+        url: https://api.github.com/user/keys
+        method: POST
+        headers:
+          Authorization: "token {{ github_token }}"
+          Content-Type: application/json
+        body_format: json
+        body:
+          title: "Ansible SSH Key"
+          key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+      register: github_key_response
+      delegate_to: localhost
+      failed_when: github_key_response.status not in [200, 201, 204]
+#      ignore_errors: yes 
+
+#    - name:  Add SSH Key to GitHub
+#      community.github.github_key:
+#        user: "{{ github_user }}"
+#        token: "{{ github_token }}"
+#        name: "{{ inventory_hostname }}"
+#        key: "{{ ssh_public_key.stdout }}"
+#        state: present
+#      delegate_to: localhost

@@ -5,6 +5,7 @@
   vars:
     git_repo: "https://github.com/vishnuteja407/Ansible_devops.git"
     dir_path: "/home/vagrant/vprofile"
+    PASSWORD: "{{ lookup('env', 'GIT_PASSWORD') }}"
   tasks:
     - name: Update APT package cache
       apt:
@@ -76,6 +77,15 @@
       args:
         chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
       ignore_errors: yes
+
+    - name: Set Git credentials for the repository
+      git:
+        repo: "{{ git_repo }}"
+        dest: "{{ dir_path }}"
+        credential: yes
+        user: "vishnuteja407" 
+        password: "{{ PASSWORD }}"
+      when: ansible_distribution == 'Ubuntu'
 
     - name: Push to 'develop' branch
       ansible.builtin.command: git push -u origin develop

@@ -1,0 +1,27 @@
+---
+- name: Pull changes from the "develop" branch
+  hosts: localhost
+  gather_facts: no
+  become: yes
+  vars:
+    username: "vishnuteja407"
+    repo_path: "/home/vagrant/vprofile"
+    repo_url: "https://github.com/vishnuteja407/Ansible_devops.git"
+    branch_to_pull: develop
+  tasks:
+    - name: Check if the directory exists
+      stat:
+        path: "{{ repo_path }}"
+      register: dir_check
+
+    - name: Ensure the repository is cloned
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_path }}"
+        clone: yes
+      when: dir_check.stat.exists == false
+
+    - name: Pull the latest changes
+      command: git pull origin "{{ branch_to_pull }}"
+      args:
+        chdir: "{{ repo_path }}"

@@ -1,0 +1,17 @@
+---
+- name: selectattr demo
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: print ansible facts
+      debug: 
+        var: ansible_facts
+
+    - name: all features
+      debug:
+        var: ansible_facts.eth1.features
+
+    - name: filter enabled
+      debug:
+        msg: "{{ ansible_facts.eth1.features | dict2items | selectattr('value', 'match', 'on')}}"
+      when: ansible_facts.eth1.features is defined

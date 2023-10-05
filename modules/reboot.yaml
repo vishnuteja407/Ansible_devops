@@ -1,0 +1,11 @@
+---
+- name: reboot module demo
+  hosts: web01
+  become: yes
+  tasks:
+    - name: reboot hosts
+      ansible.builtin.reboot:
+        msg: "Reboot by Ansible"
+        pre_reboot_delay: 5
+        post_reboot_delay: 10
+        test_command: "whoami"

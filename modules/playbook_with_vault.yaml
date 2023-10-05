@@ -1,0 +1,11 @@
+---
+- name: playbook with vault
+  hosts: all
+  tasks:
+    - name: include vault
+      ansible.builtin.include_vars:
+        file: plain-to-encrypt.yaml 
+
+    - name: print variable
+      ansible.builtin.debug:
+        var: password 

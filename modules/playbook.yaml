@@ -1,0 +1,8 @@
+---
+- name: Passing hosts to playbook
+  hosts: "{{ HOSTS }}"
+  
+  tasks:
+    - name: print Hostnames
+      ansible.builtin.debug:
+        var: HOSTS

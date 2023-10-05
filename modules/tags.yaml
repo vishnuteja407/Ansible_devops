@@ -1,0 +1,31 @@
+---
+- name: tags demo
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: example 1
+      debug:
+        msg: "example 1"
+      tags: tag1
+
+    - name: example 2
+      debug:
+        msg: "example 2"
+      tags: tag2
+
+    - name: example 3
+      debug:
+        msg: "example 3"
+      tags: tag3
+
+    - name: example 4
+      debug:
+        msg: "example 4"
+
+
+
+#  741  ansible-playbook --tags tag1 tags.yaml 
+#  742  ansible-playbook --tags tagged tags.yaml 
+#  743  ansible-playbook --tags untagged tags.yaml 
+# ansible-playbook --tags "tag1,tag2" tags.yaml
+# ansible-playbook --skip-tags tag1  tags.yaml

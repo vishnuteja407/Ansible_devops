@@ -1,0 +1,15 @@
+---
+- name: Test SSH connection to GitHub
+  hosts: web01
+  become: yes
+  tasks:
+    - name: Debug SSH Connection
+      command: ssh -v -T git@github.com
+      register: ssh_result
+      ignore_errors: yes
+
+    - name: validate of ssh is success
+      assert:
+        that: 
+          - "'successfully authenticated' in ssh_result.stderr"
+

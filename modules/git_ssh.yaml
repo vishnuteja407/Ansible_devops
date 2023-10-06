@@ -1,0 +1,112 @@
+---
+- name: git module demo
+  hosts: all
+  become: true	
+  vars:
+    repo: "git@github.com:vishnuteja407/Ansible_devops.git"
+    dest: "~/ansible-devops"
+    sshkey: "~/.ssh/id_rsa"
+    github_user: vishnuteja407
+
+  tasks:
+    - name: Ensure git is installed
+      ansible.builtin.yum:
+        name: git
+        state: present
+        update_cache: true
+      when: ansible_distribution == 'CentOS'
+
+    - name: Update APT package cache
+      apt:
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Check If SSH Keys Exist
+      stat:
+        path: ~/.ssh/id_rsa.pub
+      register: keyout
+
+    - name: print ssh key availability
+      debug:
+        var: keyout
+
+    - name: Generate SSH Key Pair
+      community.crypto.openssh_keypair:
+        path: ~/.ssh/id_rsa
+        force: true
+      when: not (keyout.stat.exists | bool)
+
+    - name: Read SSH Public Key
+      ansible.builtin.shell: cat ~/.ssh/id_rsa.pub
+      register: ssh_public_key
+
+    - name: Read Environment Variable from Localhost
+      command: echo "{{ lookup('env', 'GITHUB_ACCESS_KEY') }}"
+      register: local_var_output
+      delegate_to: localhost
+      changed_when: false
+
+    - name: Gather SSH public keys
+      shell: cat ~/.ssh/id_rsa.pub
+      register: ssh_key
+
+    - name: Ensure known_hosts file exists
+      file:
+        path: ~/.ssh/known_hosts
+        state: touch
+
+    - name: Clear known_hosts file for GitHub
+      shell: ssh-keygen -R github.com
+      ignore_errors: yes  # Ignore errors if the known_hosts file is empty
+
+    - name: Disable hostkey checking
+      ansible.builtin.lineinfile:
+        state: present
+        dest: /etc/ssh/sshd_config
+        regexp: '^#?StrictHostKeyChecking'
+        line: "StrictHostKeyChecking no"
+      notify: Restart SSH service
+
+    - name: Test SSH connection to GitHub
+      shell: ssh -T git@github.com
+      register: github_ssh_test
+      ignore_errors: yes  
+
+    - name: validate if ssh is success
+      assert:
+        that:
+          - "'successfully authenticated' in ssh_result.stderr"
+
+    - name: Add SSH Key to GitHub
+      uri:
+        url: https://api.github.com/user/keys
+        method: POST
+        headers:
+          Authorization: "token {{ local_var_output.stdout }}"
+          Content-Type: application/json
+        body_format: json
+        body:
+          title: "{{ inventory_hostname }}_SSH_Key"
+          key: "{{ ssh_key.stdout }}"
+      register: github_key_response
+      failed_when: github_key_response.status not in [200, 201, 204]      
+      when: github_ssh_test.rc != 1
+
+    - name: checkout git repo
+      ansible.builtin.git:
+        repo: "{{ repo }}"
+        dest: "{{ dest }}"
+        key_file: "{{ sshkey }}"
+
+  handlers:
+    - name: Restart SSH service
+      service:
+        name: sshd
+        state: restarted
+

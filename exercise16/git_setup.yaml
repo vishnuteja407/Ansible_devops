@@ -4,8 +4,9 @@
   become: yes  # To run tasks with sudo
   vars:
     git_repo: "https://github.com/vishnuteja407/Ansible_devops.git"
+    git_username: "vishnuteja407"
     dir_path: "/home/vagrant/vprofile"
-    PASSWORD: "{{ lookup('env', 'GIT_PASSWORD') }}"
+    git_password: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"
   tasks:
     - name: Update APT package cache
       apt:
@@ -63,26 +64,34 @@
     - name: Commit changes
       ansible.builtin.command: git commit -m "Ansible Practice"
       args:
-        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+        chdir: "{{ dir_path }}"
       ignore_errors: yes
 
     - name: Remove existing 'origin' remote (optional)
       ansible.builtin.command: git remote remove origin
       args:
-        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+        chdir: "{{ dir_path }}"
       ignore_errors: yes
 
     - name: Add 'origin' remote
       ansible.builtin.command: git remote add origin "{{ git_repo }}"
       args:
-        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
+        chdir: "{{ dir_path }}"
       ignore_errors: yes
 
-    - name: Push to 'develop' branch
-      ansible.builtin.command: git push -u origin develop
+#    - name: Push to 'develop' branch
+#      ansible.builtin.command: git push -u origin develop
+#      args:
+#        chdir: "{{ dir_path }}"
+#      ignore_errors: yes
+
+    - name: Push to Git Repository
+      shell: "git push https://{{ git_username }}:{{ git_password }}@github.com/{{ git_username }}/Ansible_devops.git"
       args:
-        chdir: "{{ dir_path }}"  # Replace with the actual path to your Git repository
-      ignore_errors: yes
+        executable: /bin/bash
+        chdir: "{{ dir_path }}"
+      environment:
+        GIT_ASKPASS: /bin/true 
 
 #    - name: Initialize a Git Repository Locally
 #      shell: 

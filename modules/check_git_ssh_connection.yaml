@@ -1,10 +1,12 @@
 ---
 - name: Test SSH connection to GitHub
-  hosts: web01
+  hosts: web03
   become: yes
   tasks:
     - name: Debug SSH Connection
       command: ssh -v -T git@github.com
+      environment:
+        ANSIBLE_SSH_ARGS: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
       register: ssh_result
       ignore_errors: yes
 

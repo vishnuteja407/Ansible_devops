@@ -1,0 +1,11 @@
+---
+- name: copy module demo
+  hosts: all
+  become: false
+  tasks:
+    - name: copy report.txt
+      ansible.builtin.copy:
+        src: report.txt
+        dest: /home/vagrant/report.txt
+        owner: vagrant
+        mode: "0644"

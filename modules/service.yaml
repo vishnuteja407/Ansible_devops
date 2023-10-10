@@ -1,0 +1,19 @@
+---
+- name: service module demo
+  hosts: all
+  become: true
+  vars:
+    services_on_boot:
+      - "chronyd.service"
+  tasks:
+    - name: populate service facts
+      ansible.builtin.service_facts:
+
+    - name: enable service on boot
+      ansible.builtin.service:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      when: "item in services"
+      with_items: "{{ services_on_boot }}"
+      when: ansible_distribution == "CentOS"

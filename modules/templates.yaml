@@ -1,0 +1,22 @@
+---
+- name: template module dmeo
+  hosts: all
+  become: true
+  vars:
+    page_title: "Placeholder"
+    page_description: |
+      This is my placeholder page example.
+      Multiline is possible :-)
+
+  tasks:
+    - name: install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+    - name: apply template
+      ansible.builtin.template:
+        src: placeholder.html.j2
+        dest: /var/www/html/index.html
+        when: ansible_distribution == "Ubuntu"

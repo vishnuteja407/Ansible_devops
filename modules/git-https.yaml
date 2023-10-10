@@ -1,0 +1,9 @@
+---
+- name: git module demo
+  hosts: all
+  become: false
+  tasks:
+    - name: checkout git repo
+      ansible.builtin.git:
+        repo: https://github.com/vishnuteja407/Cypress.git
+        dest: /home/vagrant/Cypress

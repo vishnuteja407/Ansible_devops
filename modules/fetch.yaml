@@ -1,0 +1,28 @@
+---
+- name: fetch module demo
+  hosts: all
+  become: true
+  vars:
+    log_file: "/var/log/messages"
+    dump_dir: "/home/vagrant/logs"
+  tasks:
+    - name: Delete a directory
+      ansible.builtin.file:
+        path: "{{ dump_dir }}"
+        state: absent
+      delegate_to: localhost
+
+    - name: Pause for 1 minute
+      ansible.builtin.pause:
+        minutes: 1
+
+    - name: Create a directory
+      ansible.builtin.file:
+        path: "{{ dump_dir }}"
+        state: directory
+
+    - name: fetch log
+      ansible.builtin.fetch:
+        src: "{{ log_file }}"
+        dest: "{{ dump_dir }}"
+      when: ansible_distribution == "CentOS"

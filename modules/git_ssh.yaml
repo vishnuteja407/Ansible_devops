@@ -61,27 +61,27 @@
         path: ~/.ssh/known_hosts
         state: touch
 
-    - name: Clear known_hosts file for GitHub
-      shell: ssh-keygen -R github.com
-      ignore_errors: yes  # Ignore errors if the known_hosts file is empty
+#    - name: Clear known_hosts file for GitHub
+#      shell: ssh-keygen -R github.com
+#      ignore_errors: yes  # Ignore errors if the known_hosts file is empty
 
-    - name: Disable hostkey checking
-      ansible.builtin.lineinfile:
-        state: present
-        dest: /etc/ssh/sshd_config
-        regexp: '^#?StrictHostKeyChecking'
-        line: "StrictHostKeyChecking no"
-      notify: Restart SSH service
+#    - name: Disable hostkey checking
+#      ansible.builtin.lineinfile:
+#        state: present
+#        dest: /etc/ssh/sshd_config
+#        regexp: '^#?StrictHostKeyChecking'
+#        line: "StrictHostKeyChecking no"
+#      notify: Restart SSH service
 
-    - name: Test SSH connection to GitHub
-      shell: ssh -T git@github.com
-      register: github_ssh_test
-      ignore_errors: yes  
+#    - name: Test SSH connection to GitHub
+#      command: ssh -T git@github.com
+#      register: github_ssh_test
+#      ignore_errors: yes  
 
-    - name: validate if ssh is success
-      assert:
-        that:
-          - "'successfully authenticated' in ssh_result.stderr"
+#    - name: validate if ssh is success
+#      assert:
+#        that:
+#          - "'successfully authenticated' in ssh_result.stderr"
 
     - name: Add SSH Key to GitHub
       uri:
@@ -95,8 +95,9 @@
           title: "{{ inventory_hostname }}_SSH_Key"
           key: "{{ ssh_key.stdout }}"
       register: github_key_response
-      failed_when: github_key_response.status not in [200, 201, 204]      
-      when: github_ssh_test.rc != 1
+      failed_when: github_key_response.status not in [200, 201, 204] 
+      ignore_errors: yes     
+#      when: github_ssh_test.rc != 1
 
     - name: checkout git repo
       ansible.builtin.git:

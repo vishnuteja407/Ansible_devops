@@ -1,0 +1,13 @@
+---
+version: 1
+dependencies:
+  galaxy: requirements.yaml
+  python: requirements.txt
+  system: bindep.txt
+
+additional_build_steps:
+  prepend:
+    RUN pip install --upgrade pip setuptools
+  append:
+    - RUN ls -al /
+

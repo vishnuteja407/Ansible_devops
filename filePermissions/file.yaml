@@ -1,0 +1,85 @@
+---
+- name: file module demo
+  hosts: all
+  become: false
+  vars: 
+    myfile: "/home/vagrant/example.txt"
+    mydir: "/home/vagrant/example"
+    bashfile: "/home/vagrant/example.sh"
+    mylink: "~/info"
+    mysrc: "/proc/cpuinfo"
+    hardlink: "~/hardlink"
+  tasks:
+    - name: check if file exist
+      ansible.builtin.stat:
+        path: "{{ myfile }}"
+      register: file_data
+
+    - name: report file exist
+      ansible.builtin.debug:
+        msg: "The file {{ myfile }} exist"
+      when: file_data.stat.exists
+
+    - name: create file if file doesnot exist
+      ansible.builtin.file:
+        path: "{{ myfile }}"
+        state: touch
+      when: not file_data.stat.exists
+
+    - name: create a directory
+      ansible.builtin.file:
+        path: "{{ mydir }}"
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: check if directory exists
+      ansible.builtin.stat:
+        path: "{{ mydir }}"
+      register: dir_to_check
+
+    - name: Directory found
+      ansible.builtin.debug:
+        msg: "Directory {{ mydir }} present"
+      when: dir_to_check.stat.isdir is defined and dir_to_check.stat.isdir
+
+    - name: change file permission
+      ansible.builtin.file:
+        path: "{{ myfile }}"
+        owner: "vagrant"
+        group: "users"
+        mode: "0777"
+      become: yes
+      tags: permission
+
+    - name: create a sample bash script on remote machine
+      ansible.builtin.copy:       
+        content: |
+          #!/bin/bash
+          echo "Hello World!"
+        dest: "{{ bashfile }}"
+
+    - name: set execution permission
+      ansible.builtin.file:
+        dest: "{{bashfile}}"
+        mode: "a+x"
+
+    - name: delete directory
+      ansible.builtin.file:
+        path: "{{ mydir }}"
+        state: absent
+
+    - name: creating a syslink
+      ansible.builtin.file:
+        src: "{{ mysrc }}"
+        dest: "{{ mylink }}"
+        state: link
+      tags: syslink
+
+    - name: creating hardlink
+      ansible.builtin.file:
+        src: "{{ myfile }}"
+        dest: "{{ hardlink }}"
+        state: hard
+      tags: hardlink

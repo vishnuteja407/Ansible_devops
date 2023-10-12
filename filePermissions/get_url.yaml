@@ -1,0 +1,19 @@
+- name: get_url module demo
+  hosts: all
+  become: false
+  gather_facts: false
+  vars:
+    my_url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz"
+    mycrc:  "sha512:https://downloads.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz.sha512"
+    mydest: "/home/vagrant"
+
+  tasks:
+
+    - name: download file with proxy
+      ansible.builtin.get_url:
+        url: "{{ my_url }}"
+        dest: "{{ mydest }}"
+        checksum: "{{ mycrc }}"
+        mode: "0644"
+        owner: vagrant
+        group: vagrant

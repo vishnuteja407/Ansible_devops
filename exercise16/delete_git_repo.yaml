@@ -4,7 +4,7 @@
   gather_facts: no
   vars:
     github_username: "vishnuteja407"
-    repo_name: "Ansible_devops"  
+    repo_name: "Ansible_test"  
     github_token: "{{ lookup('env', 'ANSIBLE_TOKEN') }}" 
   tasks:
     - name: Delete Repository

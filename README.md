@@ -16,3 +16,7 @@ ansible-playbook -i inventory web-db.yaml --syntax-check
 ansible-playbook -i inventory web-db.yaml -C
 
 ansible-playbook -e USERNM=cliuser -e COMM=cliuser vars_precedence.yaml
+
+ansible-builder build -t my_ee -v 3
+
+ansible-runner run -p ping.yaml --inventory inventory.ini --container-image=my_ee .

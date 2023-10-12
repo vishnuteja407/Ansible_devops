@@ -11,8 +11,14 @@
       register: keyout
 
     - name: Generate SSH Key Pair
-      command: ssh-keygen -t rsa -b 4096
+      community.crypto.openssh_keypair:
+        path: ~/.ssh/id_rsa
+        force: true
       when: not (keyout.stat.exists | bool)
+
+#    - name: Generate SSH Key Pair
+#      command: ssh-keygen -t rsa -b 4096
+#      when: not (keyout.stat.exists | bool)
 
     - name: Read SSH Public Key
       ansible.builtin.shell: cat ~/.ssh/id_rsa.pub

@@ -1,0 +1,11 @@
+---
+- name: template module demo
+  hosts: all
+  tasks:
+    - name: generate /etc/myhosts file
+      ansible.builtin.template:
+        src: hosts.j2
+        dest: /etc/myhosts
+        owner: root
+        group: root
+        mode: '0644'

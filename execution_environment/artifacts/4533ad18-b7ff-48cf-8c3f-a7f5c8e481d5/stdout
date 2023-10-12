@@ -1,0 +1,21 @@
+
+PLAY [ping module demo] ********************************************************
+
+TASK [Gathering Facts] *********************************************************
+[0;32mok: [web02][0m
+[0;32mok: [web03][0m
+[0;32mok: [db01][0m
+[0;32mok: [web01][0m
+
+TASK [test connection] *********************************************************
+[0;32mok: [web03][0m
+[0;32mok: [db01][0m
+[0;32mok: [web01][0m
+[0;32mok: [web02][0m
+
+PLAY RECAP *********************************************************************
+[0;32mdb01[0m                       : [0;32mok=2   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+[0;32mweb01[0m                      : [0;32mok=2   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+[0;32mweb02[0m                      : [0;32mok=2   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+[0;32mweb03[0m                      : [0;32mok=2   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

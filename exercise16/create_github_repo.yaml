@@ -19,8 +19,8 @@
           Authorization: "token {{ github_token }}"
         body_format: json
         body:
-          name: Ansible_devops
-          description: Devops Ansible course practice
+          name: Bash_scripting
+          description: Bash scripting practice
           private: false
           auto_init: true
         return_content: yes

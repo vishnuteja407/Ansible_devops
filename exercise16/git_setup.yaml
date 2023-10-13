@@ -11,11 +11,13 @@
     - name: Update APT package cache
       apt:
         update_cache: yes
+      when: ansible_distribution == "Ubuntu"
 
     - name: Install Git
       apt:
         name: git
         state: present
+      when: ansible_distribution == "Ubuntu"
 
     - name: Initialize git
       ansible.builtin.command: git init

@@ -2,23 +2,27 @@
 - name: Create Pull Request
   hosts: localhost
   gather_facts: no
+  vars:
+    owner: "vishnuteja407"
+    repo: "Bash_scripting"
   tasks:
     - name: Set GitHub Personal Access Token (PAT)
       set_fact:
-        github_token: "{{ lookup('env', 'PULL_REQUEST_KEY') }}"
+        github_token: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"
 
     - name: Create Pull Request
       uri:
-        url: "https://github.com/vishnuteja407/Ansible_devops/pulls"
+        url: "https://api.github.com/repos/{{ owner }}/{{ repo }}/pulls"
         method: POST
         headers:
           Authorization: "token {{ github_token }}"
-          Accept: "application/vnd.github+json"
+          Content-Type: application/json
         body_format: json
         body:
           title: "Merge develop branch with main"
           head: "develop"
           base: "main"
+          description: "merge shellscripts to main"
       register: result
       failed_when: result.status not in [200, 201, 204]
 

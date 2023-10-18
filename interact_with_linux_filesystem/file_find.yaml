@@ -1,0 +1,19 @@
+---
+- name: find demo
+  hosts: "{{ HOSTS }}"
+  vars:
+    mypath: "/home/vagrant/vprofile"
+    mypattern: "*.txt"
+  tasks:
+    - name: search files
+      ansible.builtin.find:
+        paths: "{{ mypath }}"
+        hidden: true
+        recurse: true
+        file_type: any
+        patterns: "{{ mypattern }}"
+      register: found_files
+
+    - name: print files
+      ansible.builtin.debug:
+        var: found_files

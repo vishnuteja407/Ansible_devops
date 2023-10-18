@@ -1,0 +1,45 @@
+- name: Install and configure NFS server
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Install NFS server on RedHat/CentOS
+      yum:
+        name: nfs-utils
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install NFS server on Debian/Ubuntu
+      apt:
+        name: nfs-kernel-server
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Create NFS directory
+      file:
+        path: /nfs/share
+        state: directory
+        mode: '0777'
+        owner: nobody
+        group: nogroup
+
+    - name: Configure exports
+      lineinfile:
+        path: /etc/exports
+        line: '/nfs/share *(rw,sync,no_subtree_check)'
+
+    - name: Reload NFS configuration
+      shell: exportfs -a
+
+    - name: Open NFS port in firewall on RedHat/CentOS
+      firewalld:
+        service: nfs
+        permanent: yes
+        state: enabled
+      when: ansible_os_family == "RedHat"
+
+    - name: Open NFS port in firewall on Debian/Ubuntu
+      ufw:
+        rule: allow
+        port: 2049
+      when: ansible_os_family == "Debian"
+

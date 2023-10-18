@@ -3,7 +3,7 @@
   hosts: web01
   become: true
   vars:
-    mynfs: "192.168.10.22:/nfs/share"
+    mynfs: "192.168.10.21:/nfs/share"
     mountpoint: "/share"
     permission: "0777"
     myopts: "rw,sync"

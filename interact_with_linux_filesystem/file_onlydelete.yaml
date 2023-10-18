@@ -1,0 +1,23 @@
+---
+- name: delete files in directory
+  hosts: web02
+  vars:
+    mypath: "/home/vagrant/Ansible-backup/filePermissions"
+  tasks:
+    - name: collect files
+      ansible.builtin.find:
+        paths: "{{ mypath }}"
+        hidden: true
+        recurse: true
+        file_type: any
+      register: collected_files
+
+    - name: print collected files
+      ansible.builtin.debug:
+        var: collected_files
+    - name: remove collected files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ collected_files.files }}"
+  

@@ -1,0 +1,23 @@
+---
+- name: iso_create module
+  hosts: web02
+  tasks:
+    - name: Install dependencies
+      yum:
+        name: 
+          - epel-release
+          - python3-pip
+        state: present
+      when: ansible_distribution == "CentOS"
+
+    - name: Install pycdlib
+      pip:
+        name: pycdlib
+
+    - name: create ISO file
+      community.general.iso_create:
+        src_files:
+          - /home/vagrant/Ansible-backup/filePermissions
+        dest_iso: /home/vagrant/Ansible-backup.iso
+        interchange_level: 4
+        joliet: 3

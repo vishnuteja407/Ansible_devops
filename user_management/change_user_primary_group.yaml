@@ -1,0 +1,12 @@
+---
+- name: user module demo
+  hosts: all
+  become: true
+  vars:
+    myuser: "example"
+    mygroup: "users"
+  tasks:
+    - name: change [rimary group
+      ansible.builtin.user:
+        name: "{{ myuser }}"
+        group: "{{ mygroup }}"

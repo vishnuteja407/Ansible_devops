@@ -1,0 +1,57 @@
+---
+- name: user module demo
+  hosts: all
+  become: true
+  tasks:
+    - name: create user
+      ansible.builtin.user:
+        name: example
+        password: "{{ 'password' | password_hash('sha512', 'secretsalt') }}"
+        groups:
+          - vagrant
+          - adm
+        state: "present"
+        shell: "/bin/bash"
+        system: false
+        create_home: true
+        home: "/home/example"
+        comment: "Ansible example"
+        generate_ssh_key: true
+      tags: createuser
+
+    - name: delete user
+      ansible.builtin.user:
+        name: example
+        state: absent
+        remove: true
+      tags: deleteuser
+
+    - name: change user password
+      ansible.builtin.user:
+        name: example
+        state: present
+        password: "{{ 'newpassword' | password_hash('sha512') }}"
+      tags: changepassword
+   
+    - name: disable user account
+      ansible.builtin.user:
+        name: example
+        state: present
+        password_lock: true
+        shell: "/sbin/nologin"
+      tags: disableuser
+
+    - name: enable user account
+      ansible.builtin.user:
+        name: example
+        state: present
+        password_lock: no
+        shell: "/bin/bash"
+      tags: enableuser
+
+    - name: set user password expiration time
+      ansible.builtin.user:
+        name: example
+        password_expire_min: 7
+        password_expire_max: 90
+      tags: passexpire 

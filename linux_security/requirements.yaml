@@ -1,0 +1,5 @@
+---
+roles:
+  - name: linux-system-roles.kernel_settings
+    source: https://galaxy.ansible.com
+    version: 1.1.18

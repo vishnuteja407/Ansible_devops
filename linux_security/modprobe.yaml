@@ -1,0 +1,16 @@
+---
+# lsmod | grep dummy
+# modinfo dummy
+# Load or unload kernel modules
+- name: modprobe module demo
+  hosts: all
+  become: true
+  vars:
+    module_name: "dummy"
+    module_params: "numdummies=2"
+  tasks:
+    - name: load the module
+      community.general.modprobe:
+        name: "{{ module_name }}"
+        state: present
+        params: "{{ module_params }}"

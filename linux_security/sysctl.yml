@@ -1,0 +1,17 @@
+---
+# sysctl -a
+# sysctl vm.swappiness
+- name: sysctl module demo
+  hosts: all
+  become: true
+  vars:
+    sysctl_name: "vm.swappiness"
+    sysctl_value: "30"
+  tasks:
+    - name: set sysctl
+      ansible.posix.sysctl:
+        name: "{{ sysctl_name }}"
+        value: "{{ sysctl_value }}"
+        state: present
+        sysctl_set: true
+        reload: true

@@ -1,0 +1,18 @@
+---
+# ansible-galaxy role install linux-system-roles.kernel_settings
+- name: kernel_settings demo
+  hosts: web01
+  become: true
+  vars:
+    kernel_settings_sysctrl:
+      - name: fs.file-max
+        value: 400000
+      - name: kernel.threads-max
+        value: 65536
+    kernel_settings_sysfs:
+      - name: /sys/class/net/lo/mtu
+        value: 65000
+    kernel_settings_transparent_hugepages:
+    
+  roles:
+    - linux-system-roles.kernel_settings

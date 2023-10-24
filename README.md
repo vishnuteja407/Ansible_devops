@@ -26,3 +26,7 @@ ansible-playbook playbook.yml --start-at-task="install packages"
 ansible-playbook example.yml --tags "configuration,packages"
 
 ansible-playbook example.yml --skip-tags "packages"
+
+ansible-galaxy install -r requirements.yml
+
+ansible-galaxy role install -r requirements.yaml

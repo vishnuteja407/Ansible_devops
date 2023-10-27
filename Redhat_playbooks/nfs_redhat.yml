@@ -1,0 +1,57 @@
+---
+# systemctl status nfs-server.service
+# exportfs -s
+# ls -al /nfs/share
+# firewall-cmd --list-all
+# firewall-cmd --list-services
+- name: nfs service demo
+  hosts: web02,db01
+  become: true
+  vars:
+    share: "/nfs/share"
+    options: "192.168.0.0/24(rw,sync,root_squash)"
+    permission: "0777"
+  tasks:
+    - name: nfs server installed
+      yum:
+        name:
+          - nfs-utils
+          - nfs4-acl-tools
+        state: present
+
+    - name: share directory exists
+      file:
+        path: "{{ share }}"
+        state: directory
+        mode: "{{ permission }}"
+        owner: root
+        group: root
+
+    - name: share in /etc/exports file
+      lineinfile:
+        path: "/etc/exports"
+        state: present
+        line: "{{ share }} {{ options }}"
+      notify: restart NFS server
+
+    - name: export share
+      command: "exportfs -rav"
+
+    - name: firewall enabled
+      firewalld:
+        service: "{{ item }}"
+        state: enabled
+        permanent: true
+        immediate: true
+      with_items:
+        - nfs
+        - rpc-bind
+        - mountd
+
+  handlers:
+    - name: restart NFS server
+      service:
+        name: nfs-server
+        state: restarted
+        enabled: true
+  

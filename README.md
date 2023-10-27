@@ -30,3 +30,17 @@ ansible-playbook example.yml --skip-tags "packages"
 ansible-galaxy install -r requirements.yml
 
 ansible-galaxy role install -r requirements.yaml
+
+# using ansible sign feature
+pip3 install ansible-sign
+gpg --generate-key
+cd project-dir/
+ansible-sign project gpg-sign .
+
+# To validate key
+ansible-sign project gpg-verify .
+
+
+
+# REDHAT CIS policy
+ansible-galaxy install git+https://github.com/ansible-lockdown/RHEL9-CIS.git

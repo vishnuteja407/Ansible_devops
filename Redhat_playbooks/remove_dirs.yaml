@@ -1,0 +1,12 @@
+- name: Remove Directories on Remote Machine
+  hosts: web01
+  become: true
+  tasks:
+    - name: Remove directory recursively
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /var/www/example.com
+        - /var/www/practice.com
+

@@ -1,0 +1,34 @@
+---
+- name: setup webserver
+  hosts: all
+  become: true
+  tasks:
+    - name: install httpd
+      ansible.builtin.yum:
+        name: httpd
+        state: latest
+
+    - name: custom index.html
+      ansible.builtin.copy:
+        dest: /var/www/html/index.html
+        content: |
+          Custom web page
+
+    - name: httpd service enabled
+      ansible.builtin.service:
+        name: httpd
+        enabled: true
+        state: started
+
+    - name: Start the firewall daemon
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: open firewall
+      ansible.builtin.firewalld:
+        service: http
+        state: enabled
+        immediate: true
+        permanent: true

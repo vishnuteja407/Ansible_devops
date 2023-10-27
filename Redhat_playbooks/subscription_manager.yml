@@ -1,0 +1,19 @@
+---
+# dnf install subscription-manager
+# subscription-manager status
+# subscription-manager list
+# subscription-manager list --available --all
+# subscription-manager refresh
+- name: subscription-manager module demo
+  hosts: all
+  become: true
+  vars:
+    subscription_username: "{{ ansible_user }}"
+    subscription_password: "{{ ansible_ssh_private_key_file }}"
+  tasks:
+    - name: register with subscription-manager
+      community.general.redhat_subscription:
+        state: present
+        username: "{{ subscription_username }}"
+        password: "{{ subscription_password }}"
+        auto_attach: true

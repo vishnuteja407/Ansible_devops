@@ -1,0 +1,25 @@
+---
+# https://linux.how2shout.com/install-microsoft-edge-on-linux/#Add_RPM_repository
+- name: install microsoft edge
+  hosts: web01
+  become: true
+  tasks:
+    - name: add yum signing key
+      ansible.builtin.rpm_key:
+        key: "https://packages.microsoft.com/keys/microsoft.asc"
+        state: present
+
+    - name: add repository into repo.d list
+      ansible.builtin.yum_repository:
+        name: "microsoft-edge"
+        description: "microsoft edge browser"
+        baseurl: "https://packages.microsoft.com/yumrepos/edge"
+        enabled: true
+        gpgcheck: true
+        gpgkey: "https://packages.microsoft.com/keys/microsoft.asc"
+
+    - name: install microsoft-edge-stable
+      ansible.builtin.yum:
+        name: "microsoft-edge-stable"
+        state: latest
+        update_cache: true

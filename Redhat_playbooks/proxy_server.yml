@@ -1,0 +1,34 @@
+---
+# netstat -tuln | grep 3128
+# systemctl status squid
+#  squid -k check | echo $?
+# squidclient http://www.example.org
+- name: setup proxy
+  hosts: web01
+  become: true
+  vars:
+    squid_port: 3128
+    localnet: "192.168.0.0/24"
+  tasks:
+    - name: install squid
+      yum:
+        name: squid
+        state: latest
+
+    - name: squid configuration
+      template:
+        src: "templates/squid.conf.j2"
+        dest: "/etc/squid/squid.conf"
+
+    - name: squid service enabled
+      service:
+        name: squid
+        enabled: true
+        state: started
+
+    - name: open firewall
+      ansible.posix.firewalld:
+        port: "{{ squid_port }}/tcp"
+        state: enabled
+        immediate: true
+        permanent: true

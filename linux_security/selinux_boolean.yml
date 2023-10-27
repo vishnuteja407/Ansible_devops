@@ -1,0 +1,24 @@
+---
+# https://linux.die.net/man/8/httpd_selinux
+# getsebool -a
+# getsebool httpd_use_nfs
+# sestatus
+- name: seboolean module demo
+  hosts: all
+  become: true
+  vars:
+    selinux_boolean: 'httpd_use_nfs'
+    selinux_value: true
+  tasks:
+    - name: package present
+      ansible.builtin.package:
+        name: "python3-libsemanage"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: set SeLinux boolean
+      ansible.posix.seboolean:
+        name: "{{ selinux_boolean }}"
+        state: "{{ selinux_value }}"
+        persistent: true
+      when: ansible_os_family == "RedHat"

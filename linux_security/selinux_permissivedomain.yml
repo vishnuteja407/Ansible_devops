@@ -1,0 +1,29 @@
+---
+# sestatus
+# semanage permissive -l
+- name: selinux_permissive module demo
+  hosts: all
+  become: true
+  tasks:
+    - name: semanage present
+      ansible.builtin.package:
+        name: "policycoreutils-python-utils"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install SELinux utilities
+      apt:
+        name:
+          - policycoreutils
+          - selinux-utils
+          - selinux-basics
+          - selinux-policy-default
+        state: present
+      when: ansible_pkg_mgr == "apt" 
+    
+
+    - name: change the httpd_t domain to permissive
+      community.general.selinux_permissive:
+        name: httpd_t
+        permissive: true
+      when: ansible_os_family == "RedHat"

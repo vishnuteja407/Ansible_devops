@@ -1,0 +1,29 @@
+---
+# yum list installed google-chrome-stable
+# rpm -qa | grep google-chrome-stable
+# ls -l /etc/yum.repos.d/
+# https://www.google.com/linuxrepositories/
+# https://www.cyberciti.biz/faq/howto-install-google-chrome-on-redhat-rhel-fedora-centos-linux/
+- name: install google chrome
+  hosts: all
+  become: true
+  tasks:
+    - name: Add yum signing key
+      ansible.builtin.rpm_key:
+        key: https://dl.google.com/linux/linux_signing_key.pub
+        state: present
+
+    - name: add repo to repo.d list
+      ansible.builtin.yum_repository:
+        name: google-chrome
+        description: google chrome repository
+        baseurl: http://dl.google.com/linux/chrome/rpm/stable/x86_64
+        enabled: true
+        gpgcheck: true
+        gpgkey: https://dl.google.com/linux/linux_signing_key.pub
+
+    - name: Install google-chrome-stable
+      ansible.builtin.yum:
+        name: "google-chrome-stable"
+        state: latest
+        update_cache: true

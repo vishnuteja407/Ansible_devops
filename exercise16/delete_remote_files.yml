@@ -1,0 +1,86 @@
+---
+- name: get all files and directories from git repo
+  hosts: localhost
+  vars:
+    github_api_url: "https://api.github.com"
+    github_repo_owner: "vishnuteja407"
+    github_repo_name: "Vagrant"
+    github_personal_access_token: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"
+
+  tasks:
+    - name: Get all files and directories from GitHub repo
+      uri:
+        url: "{{ github_api_url }}/repos/{{ github_repo_owner }}/{{ github_repo_name }}/contents"
+        method: GET
+        headers:
+          Authorization: "token {{ github_personal_access_token }}"
+        return_content: yes
+      register: response
+
+#    - name: Extract html_url from the response
+#      debug:
+#        msg: "{{ item }}"
+#      loop: "{{ response.json | json_query('[*].url') }}"
+#      register: content
+
+#    - name: print values from content
+#      debug:
+#        var: content
+
+    - name: Delete file from GitHub repo
+      uri:
+        url: "{{ item.url }}"
+        method: DELETE
+        headers:
+          Authorization: "token {{ github_personal_access_token }}"
+        body_format: json
+        body: '{"message":"my commit message","sha":"{{ item.sha }}"}'
+        status_code: 204
+      with_items: "{{ response.json }}"
+      when: "'.DS_Store' in item.path"
+
+    - name: Extract directories from response
+      set_fact:
+        directories: "{{ response.json | json_query(query) }}"
+      vars:
+        query: "[?type=='dir']"
+
+#    - name: list directories in GitHub repo
+#      set_fact:
+#        size_list: "{{ response.json | json_query('[*].size') }}"
+#        dir_list: "{{ response.json | json_query('[*].name') }}"
+#
+
+    - name: Get all files and sub-directories
+      uri:
+        url: "{{ github_api_url }}/repos/{{ github_repo_owner }}/{{ github_repo_name }}/contents/{{ item.name }}"
+        method: GET
+        headers: 
+          Authorization: "token {{ github_personal_access_token }}"
+        return_content: yes
+      register: dir_response
+      loop: "{{ directories }}"
+
+    - name: store result in json file
+      copy:
+        content: "{{ dir_response.results }}"
+        dest: "./response.json"
+
+    - name: Run python script
+      command: python3 ./parse_response.py
+      register: script_output
+
+    - name: print script output
+      debug: 
+        var: script_output.stdout
+
+    - name: Delete API for Sub directories
+      uri: 
+        url: "{{ item.url }}"
+        method: DELETE
+        headers:
+          Authorization: "token {{ github_personal_access_token }}"
+        body_format: json
+        body: '{"message":"Removed .DS_Store files","sha":"{{ item.sha }}"}'
+        status_code: 204
+      with_items: "{{ script_output.stdout }}"

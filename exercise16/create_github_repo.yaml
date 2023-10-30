@@ -19,8 +19,8 @@
           Authorization: "token {{ github_token }}"
         body_format: json
         body:
-          name: Bash_scripting
-          description: Bash scripting practice
+          name: Vagrant
+          description: Vagrant files for VM setup
           private: false
           auto_init: true
         return_content: yes

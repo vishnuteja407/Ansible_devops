@@ -1,0 +1,20 @@
+---
+- name: Delete vlans from IOS device
+  hosts: all
+  gather_facts: no
+  vars:
+    vlans:
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+   
+  tasks:
+    - name: Delete vlans
+      cisco.ios.ios_config:
+        lines:
+          - no vlan {{ item }}
+      loop: "{{ vlans }}"
+       

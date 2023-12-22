@@ -1,0 +1,10 @@
+{% for vlan in filtered_vlans %}
+ vlan {{ vlan['id'] }}
+ name {{ vlan['name'] }}
+ {% if vlan.get('media') %}
+   media {{ vlan['media'] }}
+ {% endif %}
+ {% if vlan.get('state') %}
+   state {{ vlan['state'] }}
+ {% endif %}
+{% endfor %}

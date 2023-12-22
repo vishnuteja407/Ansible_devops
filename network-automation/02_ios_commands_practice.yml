@@ -1,0 +1,21 @@
+---
+- name: cisco ios command module
+  hosts: all
+  tasks:
+    - name: Execute show commands
+      ios_command:
+        commands:
+          - show run
+          - show ip int brief
+      register: sh_outputs
+
+    - name: check conditions
+      ios_command:
+        commands:
+          - show run
+          - show ip interface brief
+        match: any
+        wait_for:
+          - result[0] contains description NXC 2023-12-19 2023-12-19
+          - result[1] contains GigabitEthernet0/0
+

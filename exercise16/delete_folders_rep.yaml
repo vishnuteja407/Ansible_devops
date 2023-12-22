@@ -1,0 +1,75 @@
+---
+- name: Delete folders from git repo
+  hosts: localhost
+  vars:
+    git_repo: "https://github.com/vishnuteja407/Vagrant.git"
+    github_token: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"
+    local_path: "/home/vagrant/repo"
+    repo_name: "Vagrant"
+    git_username: "vishnuteja407"
+    git_password: "{{ lookup('env', 'ANSIBLE_TOKEN') }}"
+  tasks:
+    - name: clone repo locally
+      ansible.builtin.git:
+        repo: "{{ git_repo }}"
+        dest: "{{ local_path }}"
+        single_branch: yes
+        version: develop
+        force: true
+      ignore_errors: yes
+
+    - name: Find folders with .vagrant in local system
+      ansible.builtin.find:
+        paths: "{{ local_path }}"
+#        patterns: "\/.vagrant"
+        recurse: yes
+        file_type: directory
+      register: result
+
+    - name: store result in json file
+      copy:
+        content: "{{ result.files }}"
+        dest: "./result.json"
+
+    - name: Run python script
+      command: python3 ./parse_result_for_dirs.py
+      register: script_output
+
+    - name: print script output
+      debug:
+        var: script_output.stdout
+
+    - name: delete directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items: "{{ script_output.stdout }}"
+      become: true
+     
+    - name: Check untracked files
+      ansible.builtin.command: git status
+      args:
+        chdir: "{{ local_path }}"
+      register: untracked_files
+
+    - name: Display the untracked files
+      debug:
+        var: untracked_files
+
+    - name: Add all files to Git
+      ansible.builtin.command: git add .
+      args:
+        chdir: "{{ local_path }}" 
+      ignore_errors: yes
+
+    - name: Commit changes
+      ansible.builtin.command: git commit -m "Removed .vagrant folders"
+      args:
+        chdir: "{{ local_path }}"
+      ignore_errors: yes
+
+    - name: Push to Git Repository
+      shell: "git push https://{{ git_username }}:{{ git_password }}@github.com/{{ git_username }}/{{ repo_name }}.git"
+      args:
+        executable: /bin/bash
+        chdir: "{{ local_path }}"

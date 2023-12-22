@@ -1,0 +1,27 @@
+---
+- name: Save command result
+  hosts: all
+  gather_facts: no
+  vars:
+    command_array:
+      - show run
+      - show inventory
+      - show environment power
+      - show vlan
+      - show interface status
+  tasks:
+    - name: Get config
+      cisco.ios.ios_command:
+        commands: "{{ item }}"
+      with_items:
+          - "{{ command_array }}"
+      register: backup
+
+#    - name: backup content
+#      ansible.builtin.debug:
+#        var: backup
+
+    - name: Backup to storage
+      ansible.builtin.template:
+        src: "data_processing.j2"
+        dest: "/home/vagrant/vprofile/network-automation/config/bkp_{{ inventory_hostname }}.txt"

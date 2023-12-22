@@ -1,0 +1,82 @@
+---
+- name: Configuring VLANs
+  hosts: all
+  gather_facts: no
+  vars:
+    vlans:
+      - {"id":"2","name":"voice-vlan-2","media":"ethernet","state":"active"}
+      - {"id":"3","name":"voice-vlan-3","media":"ethernet","state":"suspend"}
+      - {"id":"4","name":"voice-vlan-4","media":"ethernet"}
+      - {"id":"5","name":"data-vlan-5","state":"suspend"}
+      - {"id":"6","name":"data-vlan-6","media":"ethernet","state":"suspend"}
+      - {"id":"7","name":"fddi-vlan-7","media":"fddi","state":"suspend"}
+      - {"id":"8","name":"voice-vlan-8"}
+  
+  pre_tasks:
+    - name: check if vlan directory exists
+      stat:
+        path: /home/vagrant/vprofile/network-automation/config/vlan
+      register: dir_check
+    
+    - name: create dir if it does not exist
+      file:
+        path: /home/vagrant/vprofile/network-automation/config/vlan
+        state: directory
+      when: not dir_check.stat.exists
+
+  tasks:
+    - name: Get config
+      cisco.ios.ios_command:
+        commands:
+          - show vlan
+      register: existing_vlans
+
+    - name: Backup to storage
+      copy:
+        content: "{{ existing_vlans.stdout[0] }}"
+        dest: "/home/vagrant/vprofile/network-automation/config/vlan/bkp_before_{{ inventory_hostname }}.txt"
+
+    - name: Extracting existing VLANs
+      ansible.builtin.set_fact:
+        existing_vlan_ids: "{{ existing_vlans.stdout[0] | regex_findall('^\\d+', multiline=True) | unique }}"
+
+    - name: print existing vlans
+      ansible.builtin.debug:
+        msg: "{{ existing_vlan_ids }}"
+
+    - name: Extract vlan ids from the vlans
+      set_fact:
+        vlan_ids: "{{ vlans | map(attribute='id') | list }}"
+
+    - name: print configuration vlan ids
+      ansible.builtin.debug:
+        var: vlan_ids
+
+    - name: Remove vlans in the vlan_ids
+      set_fact:
+        filtered_vlans: "{{ vlans | rejectattr('id', 'in', existing_vlan_ids) | list }}"
+
+    - name: Display filtered users
+      debug:
+        var: filtered_vlans
+
+    - name: Generate VLAN config file
+      ansible.builtin.template:
+        src: "vlan_configuration.j2"
+        dest: "/home/vagrant/vprofile/network-automation/config/vlan_config_{{ inventory_hostname }}.txt"
+      when: filtered_vlans | length > 0
+
+    - name: Push configurations for missing VLANs to the devices
+      cisco.ios.ios_config:
+        src: "/home/vagrant/vprofile/network-automation/config/vlan_config_{{ inventory_hostname }}.txt"
+
+    - name: Get config
+      cisco.ios.ios_command:
+        commands:
+          - show vlan
+      register: existing_vlans
+
+    - name: Backup to storage
+      copy:
+        content: "{{ existing_vlans.stdout[0] }}"
+        dest: "/home/vagrant/vprofile/network-automation/config/vlan/bkp_after_{{ inventory_hostname }}.txt" 

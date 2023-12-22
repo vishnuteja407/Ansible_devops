@@ -1,0 +1,55 @@
+---
+- name: Configuring VLAN on L2 interfaces
+  hosts: all
+  gather_facts: no
+  tasks:
+#    - name: configure access
+#      ios_l2_interfaces:
+#        config:
+#          - name: TenGigabitEthernet1/1/4
+#            access:
+#              vlan: 140
+#        state: merged
+
+#    - name: configure trunk
+#      ios_l2_interfaces:
+#        config:
+#          - name: TenGigabitEthernet1/1/4
+#            trunk:
+#              allowed_vlans: 1901,1947-1949
+#              encapsulation: dot1q
+#              native_vlan: 120
+#        state: merged
+
+
+
+    - name: configure trunk
+      ios_l2_interfaces:
+        config:
+          - name: TenGigabitEthernet1/1/4
+            trunk:
+              allowed_vlans: 1901,1947-1949
+              encapsulation: dot1q
+              native_vlan: 120
+        state: replaced
+      register: int
+
+#    - debug:
+#        msg:
+#          - "{{ int }}"
+
+
+
+
+#    - name: configure trunk
+#      ios_l2_interfaces:
+#        config:
+#          - name: TenGigabitEthernet1/1/4
+#            trunk:
+#              allowed_vlans: 1901,1947-1949
+#              encapsulation: dot1q
+#              native_vlan: 120
+#        state: overridden
+#      register: int
+
+  

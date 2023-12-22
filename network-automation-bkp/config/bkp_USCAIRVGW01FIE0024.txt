@@ -1,0 +1,1236 @@
+show run
+---------------------------------------------------------------------------------------------------------------
+Building configuration...
+
+Current configuration : 31618 bytes
+!
+! Last configuration change at 07:48:59 UTC Tue Dec 12 2023 by zsnso02
+!
+version 17.3
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service call-home
+platform punt-keepalive disable-kernel-core
+!
+hostname USCAIRVGW01FIE0024
+!
+!
+vrf definition Mgmt-vrf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+logging buffered 128000
+enable secret 9 $9$DI.ZowQsoaq7Zk$M9BHg89debNT4ZrkRMoQXELcM.0FW69NBTfDoJQddT6
+!
+aaa new-model
+!
+!
+aaa group server tacacs+ RTP
+ server-private 10.122.32.58 timeout 7 key 7 04495E550C33495A
+ ip vrf forwarding Mgmt-vrf
+ ip tacacs source-interface GigabitEthernet0/0
+!
+aaa group server radius ACCT_GROUP
+ server name ISE1
+ server name ISE2DR
+!
+aaa group server radius AUTH_GROUP
+ server name ISE1
+ server name ISE2DR
+ load-balance method least-outstanding batch-size 6
+!
+aaa authentication login default group RTP line
+aaa authentication login no_tacacs line
+aaa authentication enable default group RTP enable
+aaa authentication dot1x default group AUTH_GROUP
+aaa authorization config-commands
+aaa authorization exec default group RTP if-authenticated 
+aaa authorization commands 0 default group RTP none 
+aaa authorization commands 1 default group RTP none 
+aaa authorization commands 15 default group RTP none 
+aaa accounting dot1x default start-stop group ACCT_GROUP
+aaa accounting exec default start-stop group RTP
+aaa accounting commands 0 default stop-only group RTP
+aaa accounting commands 1 default stop-only group RTP
+aaa accounting commands 15 default stop-only group RTP
+aaa accounting network default start-stop group ACCT_GROUP
+aaa accounting system default start-stop group RTP
+!
+!
+!
+!
+!
+aaa server radius dynamic-author
+!
+aaa session-id common
+boot system switch all flash:packages.conf
+switch 1 provision c9300-24u
+!
+!
+!
+!
+ip arp proxy disable
+!
+!
+!
+!
+!
+!
+!
+!
+login on-success log
+!
+!
+!
+!
+!
+!
+!
+vtp domain CAIRVGW
+vtp mode transparent
+no device-tracking logging theft
+device-tracking tracking
+!
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+crypto pki trustpoint TP-self-signed-689401697
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-689401697
+ revocation-check none
+ rsakeypair TP-self-signed-689401697
+!
+!
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01
+  30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030 
+  32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363 
+  6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934 
+  3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305 
+  43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720 
+  526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030 
+  82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D 
+  CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520 
+  1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE 
+  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC 
+  7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188 
+  68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7 
+  C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191 
+  C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44 
+  DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201 
+  06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85 
+  4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500 
+  03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905 
+  604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B 
+  D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8 
+  467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C 
+  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B 
+  5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678 
+  80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB 
+  418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0 
+  D697DF7F 28
+  	quit
+crypto pki certificate chain TP-self-signed-689401697
+ certificate self-signed 01
+  3082032E 30820216 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  30312E30 2C060355 04031325 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 36383934 30313639 37301E17 0D323330 33323231 32323235 
+  365A170D 33333033 32313132 32323536 5A303031 2E302C06 03550403 1325494F 
+  532D5365 6C662D53 69676E65 642D4365 72746966 69636174 652D3638 39343031 
+  36393730 82012230 0D06092A 864886F7 0D010101 05000382 010F0030 82010A02 
+  82010100 C3BF9B89 FEFDCDBC 7C6F98A9 43940FDA 988E21D5 76352D4B B1BE5EA9 
+  CAA32FA6 B35E3728 61C9E4FC 282CAFAD 59EEC0E6 E496B3B1 4DB7D2BE BFDC2740 
+  CB54EA92 B756DDC7 32D4F2C1 E605C02F 2596EF02 6D883526 0E08AC3E E8CFD588 
+  A7901DCB FE7C6E45 EA25B5A2 81402238 A316BD47 99C6E245 8853484A 173218F7 
+  3744CCEA 12305418 8E7E3CED 69EB7AA4 8414C9C9 D068FA8C 62AD0735 5BB43F2F 
+  3E2AED81 89735D1E 24A95369 D9FFA9C0 91124D6E 2929EFC9 0AE4083E 7642DA9B 
+  2538BA37 F33495DA 6EA0B664 B675AD38 277F63C5 F96B4F51 8A0E0D9B 7BC54463 
+  317EED60 7829A042 4053FF5A 29D38D49 B16E138F 1150FC87 CEEBA894 02BB37D5 
+  7008776B 02030100 01A35330 51300F06 03551D13 0101FF04 05300301 01FF301F 
+  0603551D 23041830 168014EF DF366681 884233FD 0529D01E AB064CAA B1B82A30 
+  1D060355 1D0E0416 0414EFDF 36668188 4233FD05 29D01EAB 064CAAB1 B82A300D 
+  06092A86 4886F70D 01010505 00038201 01001644 DC86ABBB 9950E102 9C82F2D3 
+  CA624F2F 12BA6EDE 4B8B44AD C7D6F61B 5C71EA29 7018A74F D3491C07 4561C9C5 
+  6665EDA8 624BD3CD BDA701AB B2B5B3CC 738D169F CA15CDE9 7408C6B5 8C66B15D 
+  A17F23B0 782F42A3 CFAADA9D CBDC7AC6 B819BB76 4F1720A5 622A451D 226EF5D6 
+  06E179FA 6B22A5EE FED484A6 0E653F0D AE914AED AE80B3D5 468298DA 6E585FA2 
+  0392B7A0 0C66F1FD F09CA725 CC51DA16 F1B5BF25 D813DBCC DBE40AC8 9FACDBC9 
+  3D685485 36DE9996 8F5E95D0 88936067 2D6862C7 01887288 CE396167 8FD75BA0 
+  E643F258 E7344B1E 90759595 CDE6C9B1 81F18ED4 7DEBBAA0 DB968834 CAF18721 
+  11BED82D ABCA0C3F 8752A204 70F8990F AEA6
+  	quit
+!
+!
+license boot level network-advantage addon dna-advantage
+!
+!
+diagnostic bootup level minimal
+!
+spanning-tree mode pvst
+spanning-tree portfast bpduguard default
+spanning-tree extend system-id
+spanning-tree uplinkfast
+spanning-tree vlan 98-99,120,130,140,150-151,702,801-802,901,950 priority 4096
+spanning-tree vlan 1901,1947-1949 priority 4096
+spanning-tree vlan 799,999 priority 0
+memory free low-watermark processor 133138
+!
+username admin privilege 15 secret 9 $9$6d1m1iol0bX7Xk$9R59wnKdm6.mSTO3MtkJTAqwz4h4pVcJrdi7db8sSMk
+!
+redundancy
+ mode sso
+!
+!
+!
+!
+!
+!
+transceiver type all
+ monitoring
+!
+vlan 2
+ name vlan0002
+!
+vlan 98
+ name 1109_MANAGEMENT_VLAN-98
+!
+vlan 99
+ name CloudGenix_ION3K-VLAN-99
+!
+vlan 101
+ name testvlan101
+!
+vlan 120
+ name Model-VLAN-120
+!
+vlan 130
+ name Second_Model_Bank-VLAN-130
+!
+vlan 140
+ name NonModel-VLAN-140
+!
+vlan 150
+ name ATM-VLAN-150
+!
+vlan 151
+ name ATM-VLAN-151
+!
+vlan 650
+ name Enterprise_Voice-VLAN-650
+!
+vlan 690
+ name ML-Satellite-VLAN-690
+!
+vlan 702
+ name Voice-VLAN-702
+!
+vlan 799
+ name Voice_Unused_Ports-VLAN-799
+!
+vlan 801
+ name Voice-VLAN-801
+!
+vlan 802
+ name Voice-VLAN-802
+!
+vlan 950
+ name Video-VLAN-950
+!
+vlan 999
+ name Data-Unused-Ports-VLAN-999
+!
+vlan 1901
+ name Wireless-VLAN-1901
+!
+vlan 1947
+ name WLAN-iAP-VoIP-1947
+!
+vlan 1948
+ name WLAN-iAP-User-1948
+!
+vlan 1949
+ name WLAN-iAP-MGMT-1949
+lldp run
+!
+!
+class-map match-any system-cpp-police-ewlc-control
+  description EWLC Control 
+class-map match-any system-cpp-police-topology-control
+  description Topology control
+class-map match-all VIDEO.LOW.AF42
+ match ip dscp af42 
+class-map match-any system-cpp-police-sw-forward
+  description Sw forwarding, L2 LVX data packets, LOGGING, Transit Traffic
+class-map match-any system-cpp-default
+  description EWLC Data, Inter FED Traffic 
+class-map match-any system-cpp-police-sys-data
+  description Openflow, Exception, EGR Exception, NFL Sampled Data, RPF Failed
+class-map match-any system-cpp-police-punt-webauth
+  description Punt Webauth
+class-map match-all VIDEO.MED.AF41
+ match ip dscp af41 
+class-map match-any system-cpp-police-l2lvx-control
+  description L2 LVX control packets
+class-map match-any CS1
+ match dscp cs1  af11  af12  af13 
+class-map match-any CS2
+ match dscp cs2  af21  af22  af23 
+class-map match-any CS3
+ match dscp cs3  af31  af32  af33 
+class-map match-any CS4
+ match dscp cs4  af41  af42  af43 
+class-map match-any CS5
+ match dscp cs5  ef 
+class-map match-any system-cpp-police-forus
+  description Forus Address resolution and Forus traffic
+class-map match-any system-cpp-police-multicast-end-station
+  description MCAST END STATION
+class-map match-any CS6.CS7
+ match dscp cs6  cs7 
+class-map match-all REMARK.DSCP16
+ match ip dscp cs2 
+class-map match-any system-cpp-police-high-rate-app
+  description High Rate Applications 
+class-map match-any system-cpp-police-multicast
+  description MCAST Data
+class-map match-any system-cpp-police-l2-control
+  description L2 control
+class-map match-any system-cpp-police-dot1x-auth
+  description DOT1X Auth
+class-map match-any system-cpp-police-data
+  description ICMP redirect, ICMP_GEN and BROADCAST
+class-map match-any system-cpp-police-stackwise-virt-control
+  description Stackwise Virtual OOB
+class-map match-any LOW.IPP.TRAFFIC
+ match access-group name LOW.IPP.ACCESS.LIST
+class-map match-any SIG.CS3
+ match ip dscp cs3  af31 
+class-map match-any ACL.CLASSIFIED.DATA
+ match access-group name ACL.CLASSIFIED.DATA
+class-map match-any non-client-nrt-class
+class-map match-any system-cpp-police-routing-control
+  description Routing control and Low Latency
+class-map match-any system-cpp-police-protocol-snooping
+  description Protocol snooping
+class-map match-any system-cpp-police-dhcp-snooping
+  description DHCP snooping
+class-map match-any system-cpp-police-ios-routing
+  description L2 control, Topology control, Routing control, Low Latency
+class-map match-any system-cpp-police-system-critical
+  description System Critical and Gold Pkt
+class-map match-all VIDEO.HIGH.CS5
+ match ip dscp cs5 
+class-map match-any system-cpp-police-ios-feature
+  description ICMPGEN,BROADCAST,ICMP,L2LVXCntrl,ProtoSnoop,PuntWebauth,MCASTData,Transit,DOT1XAuth,Swfwd,LOGGING,L2LVXData,ForusTraffic,ForusARP,McastEndStn,Openflow,Exception,EGRExcption,NflSampled,RpfFailed
+class-map match-all VOICE.EF
+ match ip dscp ef 
+!
+policy-map ACCESS.OUTPUT.POLICY.0420
+ class CS1
+  bandwidth remaining percent 10 
+  queue-buffers ratio 10
+ class CS2
+  bandwidth remaining percent 20 
+  queue-buffers ratio 10
+ class CS3
+  bandwidth remaining percent 6 
+  queue-buffers ratio 10
+ class CS4
+  bandwidth remaining percent 20 
+  queue-buffers ratio 10
+ class CS5
+  priority level 1
+ class CS6.CS7
+  bandwidth remaining percent 4 
+  queue-buffers ratio 10
+ class class-default
+  bandwidth remaining percent 40 
+  queue-buffers ratio 25
+policy-map USER.INGRESS.0420
+ class ACL.CLASSIFIED.DATA
+  police cir 10000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+  set dscp af22
+ class LOW.IPP.TRAFFIC
+  police cir 10000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+ class REMARK.DSCP16
+  police cir 10000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+  set dscp default
+ class SIG.CS3
+  police cir 300000 bc 48000
+   conform-action transmit 
+   exceed-action transmit 
+ class VIDEO.HIGH.CS5
+  police cir 20000000 bc 2500000
+   conform-action transmit 
+   exceed-action transmit 
+ class VIDEO.LOW.AF42
+  police cir 10000000 bc 600000
+   conform-action transmit 
+   exceed-action drop 
+ class VIDEO.MED.AF41
+  police cir 30000000 bc 3750000
+   conform-action transmit 
+   exceed-action drop 
+ class VOICE.EF
+  police cir 10000000 bc 250000
+   conform-action transmit 
+   exceed-action drop 
+ class class-default
+  police cir 10000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+  set dscp default
+policy-map system-cpp-policy
+policy-map UPLINK.INPUT.POLICY.0420
+ class CS1
+  police cir 500000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+ class CS2
+  police cir 500000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+ class CS3
+  police cir 500000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+ class CS4
+  police cir 500000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+ class CS5
+  police cir 500000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+ class CS6.CS7
+  police cir 500000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+ class class-default
+  police cir 500000000 bc 1875000
+   conform-action transmit 
+   exceed-action transmit 
+policy-map UPLINK.OUTPUT.POLICY.0420
+ class CS1
+  bandwidth remaining percent 10 
+  queue-buffers ratio 10
+  random-detect dscp-based
+  random-detect dscp 8 percent 100 100
+  random-detect dscp 10 percent 80 90
+  random-detect dscp 12 percent 65 80
+ class CS2
+  bandwidth remaining percent 20 
+  queue-buffers ratio 10
+  random-detect dscp-based
+  random-detect dscp 16 percent 100 100
+  random-detect dscp 18 percent 80 90
+  random-detect dscp 20 percent 65 80
+ class CS3
+  bandwidth remaining percent 6 
+  queue-buffers ratio 10
+  random-detect dscp-based
+  random-detect dscp 24 percent 100 100
+  random-detect dscp 26 percent 80 90
+  random-detect dscp 28 percent 65 80
+ class CS4
+  bandwidth remaining percent 20 
+  queue-buffers ratio 10
+  random-detect dscp-based
+  random-detect dscp 32 percent 100 100
+  random-detect dscp 34 percent 80 90
+  random-detect dscp 36 percent 65 80
+ class CS5
+  police rate percent 50
+  priority level 1
+ class CS6.CS7
+  bandwidth remaining percent 4 
+  queue-buffers ratio 10
+ class class-default
+  bandwidth remaining percent 40 
+  queue-buffers ratio 25
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description DO NOT MODIFY - Management Interface
+ vrf forwarding Mgmt-vrf
+ ip address 10.122.32.201 255.255.255.0
+ negotiation auto
+!
+interface GigabitEthernet1/0/1
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/2
+ description NXC 3/23/2023 3/23/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet1/0/3
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/4
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/5
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/6
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/7
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/8
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/9
+ description NXC 3/27/2023 3/27/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+!
+interface GigabitEthernet1/0/10
+ description JackID
+ switchport access vlan 2
+ switchport mode access
+ switchport voice vlan 2
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ authentication control-direction in
+ authentication event server dead action authorize vlan 2
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+ service-policy output ACCESS.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/11
+ description NXC 2023-03-30
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet1/0/12
+ description test 5/11/2023
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ authentication control-direction in
+ authentication event server dead action authorize vlan 140
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+ service-policy output ACCESS.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/13
+ description test 5/11/2023
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+ service-policy output ACCESS.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/14
+ description test 5/11/2023
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ authentication control-direction in
+ authentication event server dead action authorize vlan 140
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+ service-policy output ACCESS.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/15
+ no switchport
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/0/16
+ description USxxxxxxxxxxFAPxxxx or MAPxxxx 2023-08-29
+ switchport trunk native vlan 1949
+ switchport trunk allowed vlan 805,1948
+ switchport mode trunk
+ load-interval 30
+ no snmp trap link-status
+ no mdix auto
+ spanning-tree portfast trunk
+ service-policy input UPLINK.INPUT.POLICY.0420
+ service-policy output UPLINK.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/17
+ description USxxxxxxxxxxFAPxxxx or MAPxxxx
+ switchport trunk native vlan 1901
+ switchport trunk allowed vlan 1901
+ switchport mode trunk
+ load-interval 30
+ no snmp trap link-status
+ no mdix auto
+ spanning-tree portfast trunk
+ service-policy input UPLINK.INPUT.POLICY.0420
+ service-policy output UPLINK.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/18
+ description Device Name
+ switchport trunk native vlan 120
+ switchport trunk allowed vlan 1947-1949
+ switchport mode trunk
+ load-interval 30
+ udld port
+ service-policy input UPLINK.INPUT.POLICY.0420
+ service-policy output UPLINK.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/19
+ description NXC 4/26/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ load-interval 30
+ shutdown
+ authentication event server dead action authorize vlan 999
+ no snmp trap link-status
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+ service-policy output ACCESS.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/20
+ switchport trunk allowed vlan 120,140
+ switchport mode trunk
+ speed 1000
+ duplex full
+ no mdix auto
+!
+interface GigabitEthernet1/0/21
+ description NXC 5/11/2023
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+ service-policy output ACCESS.OUTPUT.POLICY.0420
+!
+interface GigabitEthernet1/0/22
+ no switchport
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/0/23
+ switchport trunk native vlan 120
+ switchport trunk allowed vlan 99,120,140
+ switchport mode trunk
+ load-interval 30
+ speed 1000
+ duplex full
+ no mdix auto
+!
+interface GigabitEthernet1/0/24
+ no switchport
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/1/1
+ shutdown
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface TenGigabitEthernet1/1/1
+ switchport trunk native vlan 120
+ switchport trunk allowed vlan 120,140
+ switchport mode trunk
+ udld port aggressive
+!
+interface TenGigabitEthernet1/1/2
+ no switchport
+ no ip address
+ shutdown
+!
+interface TenGigabitEthernet1/1/3
+ shutdown
+!
+interface TenGigabitEthernet1/1/4
+ shutdown
+!
+interface TenGigabitEthernet1/1/5
+ no switchport
+ no ip address
+ shutdown
+!
+interface TenGigabitEthernet1/1/6
+ shutdown
+!
+interface TenGigabitEthernet1/1/7
+ shutdown
+!
+interface TenGigabitEthernet1/1/8
+ shutdown
+!
+interface FortyGigabitEthernet1/1/1
+!
+interface FortyGigabitEthernet1/1/2
+!
+interface TwentyFiveGigE1/1/1
+!
+interface TwentyFiveGigE1/1/2
+!
+interface AppGigabitEthernet1/0/1
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan120
+ no ip address
+!
+interface Vlan130
+ no ip address
+!
+interface Vlan140
+ ip address dhcp
+!
+interface Vlan702
+ no ip address
+!
+ip default-gateway 10.122.32.193
+ip forward-protocol nd
+ip http server
+ip http secure-server
+ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 10.122.32.2
+ip tacacs source-interface GigabitEthernet0/0 
+ip tacacs source-interface GigabitEthernet0/0 vrf Mgmt-vrf
+!
+!
+ip access-list extended PRE-AUTH-CLOSED
+ 10 remark NA3RC Phase2 VER 1
+ 10 permit udp any eq bootpc any eq bootps
+ 20 deny   ip any any
+!
+!
+!
+snmp-server location Asset
+tacacs-server timeout 7
+tacacs-server directed-request
+tacacs-server key r53cret
+tacacs server 10.122.32.58
+ address ipv4 10.122.32.58
+!
+!
+!
+control-plane
+ service-policy input system-cpp-policy
+!
+!
+line con 0
+ exec-timeout 0 0
+ password rtpR0bot
+ stopbits 1
+line vty 0 4
+ transport input ssh
+line vty 5 31
+ transport input ssh
+!
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+!
+!
+!
+!
+!
+!
+end
+################################################################################################################
+################################################################################################################
+show inventory
+---------------------------------------------------------------------------------------------------------------
+NAME: "c93xx Stack", DESCR: "c93xx Stack"
+PID: C9300-24U         , VID: V03  , SN: FJC250916PW
+
+NAME: "Switch 1", DESCR: "C9300-24U"
+PID: C9300-24U         , VID: V03  , SN: FJC250916PW
+
+NAME: "Switch 1 - Power Supply B", DESCR: "Switch 1 - Power Supply B"
+PID: PWR-C1-1100WAC-P  , VID: V01  , SN: DCC2452D9SU
+
+NAME: "Switch 1 FRU Uplink Module 1", DESCR: "4x1G Uplink Module"
+PID: C9300-NM-4G       , VID: V01  , SN: FJZ250319BT
+
+NAME: "Gi1/1/1", DESCR: "1000BaseSX SFP"
+PID: GLC-SX-MMD          , VID: V02  , SN: OPM2332057R     
+
+NAME: "Gi1/1/2", DESCR: "1000BaseSX SFP"
+PID: GLC-SX-MMD          , VID: V01  , SN: OPM22250S9S
+################################################################################################################
+################################################################################################################
+show environment power
+---------------------------------------------------------------------------------------------------------------
+SW  PID                 Serial#     Status           Sys Pwr  PoE Pwr  Watts
+--  ------------------  ----------  ---------------  -------  -------  -----
+1A  Unknown             Unknown      No Input Power  Bad      Bad      Unknown    
+1B  PWR-C1-1100WAC-P    DCC2452D9SU  OK              Good     Good     1100
+################################################################################################################
+################################################################################################################
+show vlan
+---------------------------------------------------------------------------------------------------------------
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/16, Gi1/0/17, Gi1/0/18, Gi1/0/20, Gi1/0/23, Gi1/1/1, Gi1/1/2, Gi1/1/3, Gi1/1/4, Ap1/0/1
+2    vlan0002                         active    Gi1/0/10
+98   1109_MANAGEMENT_VLAN-98          active    
+99   CloudGenix_ION3K-VLAN-99         active    
+101  testvlan101                      active    
+120  Model-VLAN-120                   active    Gi1/0/13
+130  Second_Model_Bank-VLAN-130       active    
+140  NonModel-VLAN-140                active    Gi1/0/12, Gi1/0/14
+150  ATM-VLAN-150                     active    
+151  ATM-VLAN-151                     active    
+650  Enterprise_Voice-VLAN-650        active    
+690  ML-Satellite-VLAN-690            active    
+702  Voice-VLAN-702                   active    
+799  Voice_Unused_Ports-VLAN-799      active    Gi1/0/1, Gi1/0/2, Gi1/0/3, Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/11, Gi1/0/12, Gi1/0/13, Gi1/0/19, Gi1/0/21
+801  Voice-VLAN-801                   active    Gi1/0/14
+802  Voice-VLAN-802                   active    
+950  Video-VLAN-950                   active    
+999  Data-Unused-Ports-VLAN-999       active    Gi1/0/1, Gi1/0/2, Gi1/0/3, Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/11, Gi1/0/19, Gi1/0/21
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+1901 Wireless-VLAN-1901               active    
+1947 WLAN-iAP-VoIP-1947               active    
+1948 WLAN-iAP-User-1948               active    
+1949 WLAN-iAP-MGMT-1949               active    
+
+VLAN Type  SAID       MTU   Parent RingNo BridgeNo Stp  BrdgMode Trans1 Trans2
+---- ----- ---------- ----- ------ ------ -------- ---- -------- ------ ------
+1    enet  100001     1500  -      -      -        -    -        0      0   
+2    enet  100002     1500  -      -      -        -    -        0      0   
+98   enet  100098     1500  -      -      -        -    -        0      0   
+99   enet  100099     1500  -      -      -        -    -        0      0   
+101  enet  100101     1500  -      -      -        -    -        0      0   
+120  enet  100120     1500  -      -      -        -    -        0      0   
+130  enet  100130     1500  -      -      -        -    -        0      0   
+140  enet  100140     1500  -      -      -        -    -        0      0   
+150  enet  100150     1500  -      -      -        -    -        0      0   
+151  enet  100151     1500  -      -      -        -    -        0      0   
+650  enet  100650     1500  -      -      -        -    -        0      0   
+690  enet  100690     1500  -      -      -        -    -        0      0   
+702  enet  100702     1500  -      -      -        -    -        0      0   
+799  enet  100799     1500  -      -      -        -    -        0      0   
+801  enet  100801     1500  -      -      -        -    -        0      0   
+802  enet  100802     1500  -      -      -        -    -        0      0   
+950  enet  100950     1500  -      -      -        -    -        0      0   
+999  enet  100999     1500  -      -      -        -    -        0      0   
+1002 fddi  101002     1500  -      -      -        -    -        0      0   
+1003 tr    101003     1500  -      -      -        -    -        0      0   
+1004 fdnet 101004     1500  -      -      -        ieee -        0      0   
+1005 trnet 101005     1500  -      -      -        ibm  -        0      0   
+1901 enet  101901     1500  -      -      -        -    -        0      0   
+1947 enet  101947     1500  -      -      -        -    -        0      0   
+1948 enet  101948     1500  -      -      -        -    -        0      0   
+1949 enet  101949     1500  -      -      -        -    -        0      0   
+
+Remote SPAN VLANs
+------------------------------------------------------------------------------
+
+
+Primary Secondary Type              Ports
+------- --------- ----------------- ------------------------------------------
+################################################################################################################
+################################################################################################################
+show interface status
+---------------------------------------------------------------------------------------------------------------
+Port         Name               Status       Vlan       Duplex  Speed Type
+Gi1/0/1      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/2      NXC 3/23/2023 3/23 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/3      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/4      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/5      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/6      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/7      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/8      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/9      NXC 3/27/2023 3/27 disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/10     JackID             notconnect   2            auto   auto 10/100/1000BaseTX
+Gi1/0/11     NXC 2023-03-30     disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/12     test 5/11/2023     notconnect   140          auto   auto 10/100/1000BaseTX
+Gi1/0/13     test 5/11/2023     notconnect   120          auto   auto 10/100/1000BaseTX
+Gi1/0/14     test 5/11/2023     notconnect   140          auto   auto 10/100/1000BaseTX
+Gi1/0/15                        disabled     routed       auto   auto 10/100/1000BaseTX
+Gi1/0/16     USxxxxxxxxxxFAPxxx notconnect   1            auto   auto 10/100/1000BaseTX
+Gi1/0/17     USxxxxxxxxxxFAPxxx notconnect   1            auto   auto 10/100/1000BaseTX
+Gi1/0/18     Device Name        notconnect   1            auto   auto 10/100/1000BaseTX
+Gi1/0/19     NXC 4/26/2023      disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/20                        notconnect   1            full   1000 10/100/1000BaseTX
+Gi1/0/21     NXC 5/11/2023      disabled     999          auto   auto 10/100/1000BaseTX
+Gi1/0/22                        disabled     routed       auto   auto 10/100/1000BaseTX
+Gi1/0/23                        notconnect   1            full   1000 10/100/1000BaseTX
+Gi1/0/24                        disabled     routed       auto   auto 10/100/1000BaseTX
+Gi1/1/1                         disabled     1            full   1000 1000BaseSX SFP
+Gi1/1/2                         notconnect   1            full   1000 1000BaseSX SFP
+Gi1/1/3                         notconnect   1            auto   auto unknown
+Gi1/1/4                         notconnect   1            auto   auto unknown
+Ap1/0/1                         connected    1          a-full a-1000 App-hosting port
+################################################################################################################
+################################################################################################################

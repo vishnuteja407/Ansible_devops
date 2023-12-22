@@ -1,0 +1,12 @@
+---
+- name: Simple IOS running config playbook
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: save the running config
+      cisco.ios.ios_config:
+        save_when: modified
+        backup: true
+        backup_options:
+          filename: "{{ inventory_hostname }}.txt"
+          dir_path: /home/vagrant/vprofile/network-automation/config

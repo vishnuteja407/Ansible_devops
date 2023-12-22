@@ -1,0 +1,9 @@
+interface TenGigabitEthernet1/1/7
+ description USxxxxxxxxxxFAPxxxx or MAPxxxx
+ switchport trunk native vlan 1901
+ switchport trunk allowed vlan 1901
+ switchport mode trunk
+ load-interval 30
+ shutdown
+ no snmp trap link-status
+end

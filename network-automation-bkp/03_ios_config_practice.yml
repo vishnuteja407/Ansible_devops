@@ -1,0 +1,31 @@
+---
+- name: ios config module practice
+  hosts: all
+  gather_facts: no 
+  tasks:
+    - name: config mode command
+      ios_config:
+        lines:
+          - ip domain name ansible-test.com
+    
+    - name: configure interface
+      ios_config:
+        parents: interface GigabitEthernet0/7
+        lines:
+          - description USxxxxxxxxxxFAPxxxx or MAPxxxx
+          - load-interval 30
+        diff_against: startup
+        save_when: modified
+
+    - name: configure multiple interfaces
+      ios_config:
+        parents: "{{ item }}"
+        lines:
+          - description ansible-managed
+          - load-interval 30
+        after:
+          - no shutdown
+        save_when: modified
+      with_items:
+        - interface GigabitEthernet0/8
+        - interface GigabitEthernet0/9

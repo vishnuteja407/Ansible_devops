@@ -1,0 +1,21 @@
+ vlan 3
+ name voice-vlan-3
+    media ethernet
+     state suspend
+  vlan 4
+ name voice-vlan-4
+    media ethernet
+   vlan 5
+ name data-vlan-5
+     state suspend
+  vlan 6
+ name data-vlan-6
+    media ethernet
+     state suspend
+  vlan 7
+ name fddi-vlan-7
+    media fddi
+     state suspend
+  vlan 8
+ name voice-vlan-8
+  

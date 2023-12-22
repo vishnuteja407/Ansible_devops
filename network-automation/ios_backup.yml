@@ -1,0 +1,21 @@
+---
+- name: Backup
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Get config
+      cisco.ios.ios_command:
+        commands:
+          - terminal leng 0
+          - show run
+          - show inventory
+      register: backup
+
+    - name: backup content
+      ansible.builtin.debug:
+        var: backup.stdout[1]
+
+    - name: Backup to storage
+      copy:
+        content: "{{ backup.stdout[1] }}"
+        dest: "/home/vagrant/vprofile/network-automation/config/bkp_{{ inventory_hostname }}_{{ now(True) }}.txt"

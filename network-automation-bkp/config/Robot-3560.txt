@@ -1,0 +1,1686 @@
+Building configuration...
+
+Current configuration : 43411 bytes
+!
+! Last configuration change at 10:57:34 GMT Tue Dec 12 2023 by zsnso02
+! NVRAM config last updated at 10:57:38 GMT Tue Dec 12 2023 by zsnso02
+!
+version 12.2
+service nagle
+no service pad
+service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec localtime show-timezone
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+!
+hostname Robot-3560
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 128000
+no logging console
+enable secret 5 $1$1LtK$GMCvnTl2npVgObtyj0r3P/
+!
+username admin privilege 15 password 7 070E25414707
+!
+!
+aaa new-model
+!
+!
+aaa group server radius GHT
+!
+aaa group server radius ABC
+!
+aaa group server radius ACCT_GROUP
+ server 5.6.7.8 auth-port 1645 acct-port 1646
+!
+aaa group server radius AUTH_GROUP
+ server 1.2.3.4 auth-port 1645 acct-port 1646
+!
+aaa authentication login default group tacacs+ group tacacs+ line
+aaa authentication login no_tacacs line
+aaa authentication enable default group tacacs+ group tacacs+ enable
+aaa authentication dot1x default group AUTH_GROUP
+aaa authorization config-commands
+aaa authorization exec default group tacacs+ 
+aaa authorization commands 0 default group tacacs+ group tacacs+ none 
+aaa authorization commands 1 default group tacacs+ group tacacs+ none 
+aaa authorization commands 15 default group tacacs+ group tacacs+ none 
+aaa authorization network default group AUTH_GROUP 
+aaa accounting dot1x default start-stop group ACCT_GROUP
+aaa accounting exec default start-stop group tacacs+
+aaa accounting commands 0 default stop-only group tacacs+
+aaa accounting commands 1 default stop-only group tacacs+
+aaa accounting commands 15 default stop-only group tacacs+
+aaa accounting network default start-stop group ACCT_GROUP
+aaa accounting system default start-stop group tacacs+
+!
+!
+aaa server radius dynamic-author
+!
+aaa session-id common
+clock timezone GMT 0
+system mtu routing 1500
+vtp domain BofALab1
+vtp mode transparent
+no ip source-route
+no ip domain-lookup
+ip domain-name boa
+!
+!
+ip multicast-routing distributed
+!
+mls qos srr-queue output cos-map queue 2 threshold 2 0
+mls qos srr-queue output cos-map queue 3 threshold 2 4
+mls qos srr-queue output cos-map queue 4 threshold 1 3
+mls qos srr-queue output cos-map queue 4 threshold 2 6 7
+mls qos srr-queue output dscp-map queue 2 threshold 2 0 1 2 3 4 5 6 7
+mls qos srr-queue output dscp-map queue 3 threshold 2 32 33 34 35 36 37 38 39
+mls qos srr-queue output dscp-map queue 4 threshold 1 24 25 26 27 28 29 30 31
+mls qos srr-queue output dscp-map queue 4 threshold 2 48 49 50 51 52 53 54 55
+mls qos srr-queue output dscp-map queue 4 threshold 2 56 57 58 59 60 61 62 63
+mls qos queue-set output 1 threshold 2 40 70 50 400
+mls qos queue-set output 1 threshold 3 40 70 50 400
+mls qos queue-set output 1 threshold 4 40 70 50 400
+mls qos queue-set output 1 buffers 15 50 20 15
+mls qos
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree portfast bpduguard default
+spanning-tree extend system-id
+spanning-tree vlan 1-9,11,13-40,99,101,120,130,150,212,234,650 priority 4096
+spanning-tree vlan 690,701-702,803,805,901,942-948,952,956-957 priority 4096
+spanning-tree vlan 989,1901,1949,2000-2400,2500-2504,2506-2607 priority 4096
+spanning-tree vlan 2609-2610 priority 4096
+spanning-tree vlan 12 priority 12288
+spanning-tree vlan 1121-1123,2505,2608 priority 0
+!
+vlan internal allocation policy ascending
+!
+vlan 2-9 
+!
+vlan 10
+ name LabMgmt_10.122.32.0/24
+!
+vlan 12
+ name vlan-name
+!
+vlan 70
+ name test
+!
+vlan 89-90 
+!
+vlan 99
+ name CloudGenix_ION3K-VLAN-99
+!
+vlan 101
+ name testvlan101
+!
+vlan 111
+ name Vlan111
+!
+vlan 120
+ name Model-VLAN-120
+!
+vlan 130
+ name Second_Model_Bank-VLAN-130
+!
+vlan 140 
+!
+vlan 150
+ name ATA-VLAN-150
+!
+vlan 151
+ name Vlan151
+!
+vlan 200 
+!
+vlan 212
+ name vlan212
+!
+vlan 219
+ name DMZ
+!
+vlan 300
+ name vlan300
+!
+vlan 677
+ name Branch-677
+!
+vlan 690
+ name ML-Satellite-VLAN-690
+!
+vlan 799,801-802 
+!
+vlan 901
+ name Wireless-VLAN-901
+!
+vlan 942
+ name VLAN942
+!
+vlan 943
+ name vlan943
+!
+vlan 944
+ name vlan944
+!
+vlan 945
+ name vlan945
+!
+vlan 946
+ name vlan946
+!
+vlan 947
+ name vlan947
+!
+vlan 948
+ name vlan948
+!
+vlan 950
+ name Branch-950
+!
+vlan 951 
+!
+vlan 952
+ name vlan952
+!
+vlan 955
+ name Branch-955
+!
+vlan 956
+ name vlan956
+!
+vlan 957
+ name vlan957
+!
+vlan 961
+ name sss
+!
+vlan 989
+ name Security-VLAN-989
+!
+vlan 999 
+!
+vlan 1121
+ name Vlan1121
+!
+vlan 1122
+ name Vlan1122
+!
+vlan 1123
+ name Vlan1123
+!
+vlan 1124,1567 
+!
+vlan 1899
+ name vlan_1899
+!
+vlan 1900
+ name existing_vlan
+!
+vlan 1901
+ name AurbaVLAN
+!
+vlan 1947
+ name WLAN-iAP-Voice
+!
+vlan 1948
+ name WLAN-iAP-User
+!
+vlan 1949 
+!
+ip ssh time-out 60
+ip ssh authentication-retries 2
+ip ssh source-interface Vlan10
+ip ssh version 2
+ip scp server enable
+!
+class-map match-all VIDEO.HIGH.CS5.PORTS-1
+class-map match-all VIDEO.LOW.AF42
+ match ip dscp af42 
+class-map match-all testroll
+class-map match-all Suvarna-class-2
+  description newtest
+ match ip dscp af11 
+class-map match-all test1234
+class-map match-all sfdsdfsf
+class-map match-all TEST
+class-map match-all TEST_QUEUE
+class-map match-all ACCESS.OUTPUT.POLICY
+class-map match-all VIDEO.HIGH.CS5.PORTS
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/48
+class-map match-all VIDEO.MED.AF41
+ match ip dscp af41 
+class-map match-all VOICE.EF.PORTS
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/48
+class-map match-any CS3
+ match ip precedence 3 
+ match ip dscp cs3 
+ match ip dscp af31 
+ match ip dscp af32 
+ match ip dscp af33 
+class-map match-all test123
+class-map match-all TEST123
+class-map match-all ACL.CLASSIFIED.DATA.PORTS-Test
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/48
+class-map match-all numflat-class
+  description desc
+class-map match-all numflat-class11
+class-map match-all numflat-class01
+class-map match-all numflat-class07
+class-map match-all CS6.CS7
+class-map match-all 123
+class-map match-all ACL.CLASSIFIED.DATA.PORTS
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/52
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/48
+class-map match-all SIG.CS3.PORTS
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/48
+class-map match-all Test
+  description TEST
+class-map match-all cirmode-class05
+class-map match-all LOW.IPP.TRAFFIC
+ match access-group name LOW.IPP.ACCESS.LIST
+class-map match-any SIG.CS3
+ match ip dscp cs3  af31 
+class-map match-all ACL.CLASSIFIED.DATA
+ match access-group name ACL.CLASSIFIED.DATA.ACCESS.LIST
+class-map match-all class2
+ match access-group name PRE-AUTH
+class-map match-all class1
+ match access-group name PRE-AUTH
+ match input-interface  GigabitEthernet0/1
+ match input-interface  GigabitEthernet0/1 GigabitEthernet0/24
+class-map match-all VIDEO.LOW.AF42.PORTS
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/48
+class-map match-all outofsync
+class-map match-all testuil
+class-map match-all sadsafdsa
+class-map match-all rate.percentage-class01
+class-map match-all VIDEO.HIGH.CS5
+ match ip dscp cs5 
+class-map match-all VIDEO.MED.AF41.PORTS
+ match input-interface  GigabitEthernet0/1 - GigabitEthernet0/48
+class-map match-all VOICE.EF
+ match ip dscp ef 
+!
+!
+policy-map teteusnj
+policy-map shsnkjdhjd
+policy-map suvv
+policy-map policy.cirmode.map11
+ class numflat-class01
+policy-map outofsynch
+policy-map hgjhufufkjnk
+policy-map TestPolice
+ class class2
+policy-map jhdkfhkd
+policy-map policy.numflat.map05
+ class numflat-class07
+policy-map test647883
+policy-map policy.numflat.map07
+ class numflat-class07
+policy-map TEST
+ class class-default
+  police 20000 40000 exceed-action drop
+policy-map test6767
+policy-map test2828
+policy-map test232323
+policy-map ACCESS.OUTPUT.POLICY
+ class CS6.CS7
+policy-map test456
+ class class2
+policy-map test2
+ class class1
+  police 6000000 106000 exceed-action drop
+policy-map TEST2
+policy-map POLICY.VIDEO.LOW.AF42
+ description Child Policy
+ class VIDEO.LOW.AF42.PORTS
+  police 6000000 106000 exceed-action drop
+policy-map OUTPUT.POLICY
+policy-map POLICY.VIDEO.MED.AF41
+ description Child policy  
+ class VIDEO.MED.AF41.PORTS
+  police 30000000 530000 exceed-action drop
+policy-map Test
+ class Test
+  police 30000000 530000 exceed-action drop
+policy-map ACCESS.OUTPUT.POLICY.0120
+policy-map test.policy
+ class numflat-class
+  police 400000 50000 exceed-action drop
+policy-map DATA.MEDIA.VLAN
+ description DATA.MEDIA.VLAN
+ class class-default
+  set dscp default
+policy-map POLICY.VOICE.EF
+ description Child Policy
+ class VOICE.EF.PORTS
+  police 4000000 125000 exceed-action drop
+policy-map POLICY.VIDEO.HIGH.CS5
+ description Child policy  
+ class VIDEO.HIGH.CS5.PORTS
+  police 20000000 1000000 exceed-action policed-dscp-transmit
+policy-map POLICY.SIG.CS3
+ description Child Policy
+ class SIG.CS3.PORTS
+  police 300000 48000 exceed-action policed-dscp-transmit
+policy-map POLICY.LOW.IPP.TRAFFIC
+ description Child Policy
+ class ACL.CLASSIFIED.DATA.PORTS
+policy-map POLICY.ACL.CLASSIFIED.DATA
+ description Child Policy
+ class ACL.CLASSIFIED.DATA.PORTS
+policy-map USER.INGRESS.0120
+ description Parent policy  
+ class VOICE.EF
+  trust dscp
+  service-policy POLICY.VOICE.EF
+ class VIDEO.HIGH.CS5
+  trust dscp
+  service-policy POLICY.VIDEO.HIGH.CS5
+ class VIDEO.MED.AF41
+  trust dscp
+  service-policy POLICY.VIDEO.MED.AF41
+ class VIDEO.LOW.AF42
+  trust dscp
+  service-policy POLICY.VIDEO.LOW.AF42
+ class SIG.CS3
+  trust dscp
+  service-policy POLICY.SIG.CS3
+ class LOW.IPP.TRAFFIC
+  trust dscp
+  service-policy POLICY.LOW.IPP.TRAFFIC
+ class ACL.CLASSIFIED.DATA
+  set dscp af22
+  service-policy POLICY.ACL.CLASSIFIED.DATA
+policy-map numflat.policy
+ class numflat-class
+  police 20000000 1000000 exceed-action policed-dscp-transmit
+policy-map USER.INGRESS.0120MF
+policy-map policy.rate.percentage-class01
+ class rate.percentage-class01
+policy-map NumFlat
+ class class2
+  police 300000 40000 exceed-action drop
+policy-map VOICE.VLAN
+ description VOICE.VLAN
+ class class-default
+  set dscp default
+policy-map pol30
+ class class1
+  police 8000000 8000 exceed-action drop
+policy-map send.numflat.policy
+ class numflat-class
+  police 20000000 1000000 exceed-action policed-dscp-transmit
+policy-map pol50
+ class class2
+  police 8000 16000 exceed-action drop
+ class class1
+  police 8000000 8000 exceed-action policed-dscp-transmit
+policy-map pol40
+ class class2
+  police 8000 16000 exceed-action drop
+policy-map INPUT.POLICY
+policy-map TEST.INPUT.POLICY.TEST
+ class class-default
+!
+!
+!
+interface Loopback0
+ description loopback dsc
+ no ip address
+!
+interface Loopback1
+ description Merrill Lynch Anycast RP Address
+ ip address 30.241.87.250 255.255.255.255
+ no ip redirects
+ no ip proxy-arp
+ ip pim sparse-mode
+!
+interface Loopback2
+ no ip address
+!
+interface Port-channel1
+!
+interface GigabitEthernet0/1
+ description DO NOT MODIFY - management uplink port
+ switchport access vlan 10
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+ description USxxxxxxxxxNMPxxxx 2022-09-19
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 140
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/5
+ description USxxxxxxxxxxFAPxxxx 2022-09-19
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 1949
+ switchport trunk allowed vlan 150,1901
+ switchport mode trunk
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ mls qos trust dscp
+ no snmp trap link-status
+ no mdix auto
+ spanning-tree portfast trunk
+!
+interface GigabitEthernet0/6
+ description USxxxxxxxxxxFAPxxxx or MAPxxxx
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 1901
+ switchport trunk allowed vlan 150,1901
+ switchport mode trunk
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ mls qos trust dscp
+ no snmp trap link-status
+ no mdix auto
+ spanning-tree portfast trunk
+!
+interface GigabitEthernet0/7
+ no switchport
+ no ip address
+!
+interface GigabitEthernet0/8
+ no switchport
+ no ip address
+ mls qos trust dscp
+!
+interface GigabitEthernet0/9
+ description Robot-3560
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 120
+ switchport trunk allowed vlan 151,650
+ switchport mode trunk
+ load-interval 30
+ shutdown
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ udld port
+ mls qos trust dscp
+!
+interface GigabitEthernet0/10
+ description Model Client 2021-06-11-Modify
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ udld port aggressive
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ spanning-tree portfast
+!
+interface GigabitEthernet0/11
+ description USxxxxxxxxxVRDxxxx 2022-09-06
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/12
+ description USxxxxxxxxxCRDxxxx 2021-10-11
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 140
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/13
+ description JackID
+ switchport access vlan 2
+ switchport mode access
+ switchport voice vlan 2
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 2
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/14
+ description USxxxxxxxxxJAMxxxx 2021-10-11
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 140
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/15
+ description USxxxxxxxxxS0001-x.x.x.x 2022-06-22
+ switchport access vlan 120
+ switchport mode access
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/16
+ description JackID1234
+ switchport access vlan 950
+ switchport mode access
+ switchport voice vlan 120
+ ip access-group PRE-AUTH in
+ load-interval 30
+ duplex full
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 950
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/17
+ description Standalone IP phone 2022-06-22
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 802
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/18
+ description Printer
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/19
+ description Device Name
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 120
+ switchport trunk allowed vlan 801,803
+ switchport mode trunk
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ udld port
+ mls qos trust dscp
+!
+interface GigabitEthernet0/20
+ description JackID
+ switchport access vlan 2
+ switchport mode access
+ switchport voice vlan 2
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 2
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/21
+ description Model Client 2021-08-16
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/22
+ description Model Client 2021-08-16
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/23
+ description USxxxxxxxxxATMxxxx/xxxxxxxx -x.x.x.x 2021-08-09
+ switchport access vlan 151
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 151
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/24
+ description USxxxxxxxxxxFAPxxxx or MAPxxxx
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 1901
+ switchport trunk allowed vlan 1901
+ switchport mode trunk
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ mls qos trust dscp
+ no snmp trap link-status
+ no mdix auto
+ spanning-tree portfast trunk
+!
+interface GigabitEthernet0/25
+ description Model Client 2021-06-16
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/26
+ no switchport
+ no ip address
+!
+interface GigabitEthernet0/27
+ description USxxxxxxxxVTCxxxx-RVS 2021-09-16
+ switchport access vlan 950
+ switchport mode access
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 950
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/28
+ description USxxxxxxxxVTCxxxx-RVS 2021-09-16
+ switchport access vlan 950
+ switchport mode access
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 950
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/29
+ no switchport
+ no ip address
+!
+interface GigabitEthernet0/30
+ description USxxxxxxxxxS0001-x.x.x.x 2022-09-19
+ switchport access vlan 120
+ switchport mode access
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/31
+ description Standalone IP phone 2022-09-19
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 802
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/32
+ description Printer
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/33
+ description USxxxxxxxxxCRDxxxx 2022-09-19
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 140
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/34
+ description USxxxxxxxxxATMxxxx/xxxxxxxx -x.x.x.x 2022-09-19
+ switchport access vlan 151
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ speed auto 100
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 151
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/35
+ description USxxxxxxxxxJAMxxxx 2022-09-19
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 140
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/36
+ description NXC 2022-09-19
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ shutdown
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/37
+ description JACKID1234
+ switchport access vlan 950
+ switchport mode access
+ switchport voice vlan 120
+ ip access-group PRE-AUTH in
+ load-interval 30
+ duplex full
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 950
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/38
+ description Model Client 2022-09-19
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/39
+ description LOB connection - VLAN 120 2022-09-19
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 801
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/40
+ no switchport
+ no ip address
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+ description USxxxxxxxxxUPSxxxx 2022-09-19
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 120
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/43
+ description USxxxxxxxxVTCxxxx-RVS 2022-09-19
+ switchport access vlan 950
+ switchport mode access
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 950
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos trust dscp
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/44
+ description testLive
+!
+interface GigabitEthernet0/45
+ description testLive
+!
+interface GigabitEthernet0/46
+ description testLive2
+ switchport mode access
+!
+interface GigabitEthernet0/47
+ description testLive2
+ switchport mode access
+!
+interface GigabitEthernet0/48
+ description USxxxxxxxxxALMxxxx 2020-09-29
+ switchport access vlan 140
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH in
+ load-interval 30
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication host-mode multi-domain
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ mls qos vlan-based
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ no mdix auto
+ spanning-tree portfast
+!
+interface GigabitEthernet0/49
+ no switchport
+ no ip address
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ mls qos trust dscp
+!
+interface GigabitEthernet0/50
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+!
+interface GigabitEthernet0/51
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+!
+interface GigabitEthernet0/52
+ srr-queue bandwidth share 1 22 33 44
+ priority-queue out 
+ mls qos trust dscp
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan2
+ description Branch modify switch
+ no ip address
+!
+interface Vlan3
+ no ip address
+!
+interface Vlan10
+ ip address 10.122.32.204 255.255.255.0
+ no ip proxy-arp
+!
+interface Vlan99
+ no ip address
+!
+interface Vlan100
+ no ip address
+!
+interface Vlan101
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan111
+ description User 30.0.2.0/25
+ no ip address
+!
+interface Vlan120
+ description Switch Management VLAN - Model LAN Segment
+ no ip address
+ no ip route-cache
+ no ip mroute-cache
+ load-interval 30
+ service-policy input DATA.MEDIA.VLAN
+!
+interface Vlan130
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan150
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan212
+ no ip address
+!
+interface Vlan234
+ no ip address
+!
+interface Vlan650
+ no ip address
+ service-policy input VOICE.VLAN
+!
+interface Vlan677
+ description Branch modify switch
+ no ip address
+!
+interface Vlan690
+ no ip address
+!
+interface Vlan701
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan702
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan803
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan805
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan901
+ no ip address
+ service-policy input USER.INGRESS.0120
+!
+interface Vlan942
+ no ip address
+!
+interface Vlan943
+ no ip address
+!
+interface Vlan944
+ no ip address
+!
+interface Vlan945
+ no ip address
+!
+interface Vlan946
+ no ip address
+!
+interface Vlan947
+ no ip address
+!
+interface Vlan948
+ no ip address
+!
+interface Vlan950
+ description Branch modify switch
+ no ip address
+!
+interface Vlan951
+ description Branch modify switch
+ no ip address
+!
+interface Vlan952
+ no ip address
+!
+interface Vlan955
+ description Branch modify switch
+ no ip address
+!
+interface Vlan956
+ no ip address
+!
+interface Vlan957
+ no ip address
+!
+interface Vlan989
+ no ip address
+ service-policy input DATA.MEDIA.VLAN
+!
+interface Vlan990
+ no ip address
+!
+interface Vlan1121
+ description User 30.0.2.0/25
+ no ip address
+!
+interface Vlan1122
+ description User 30.0.2.0/25
+ no ip address
+!
+interface Vlan1123
+ description User 30.0.2.0/25
+ no ip address
+!
+interface Vlan1124
+ no ip address
+ ip helper-address 165.48.113.142
+ ip helper-address 171.163.3.251
+!
+interface Vlan1901
+ no ip address
+ service-policy input DATA.MEDIA.VLAN
+!
+ip default-gateway 10.122.32.2
+no ip classless
+ip route 0.0.0.0 0.0.0.0 10.122.32.203
+ip route 0.0.0.0 0.0.0.0 10.122.32.2
+no ip http server
+no ip http secure-server
+!
+ip access-list standard snmp-read
+ip access-list standard standard-jumbled-seq
+ permit 10.122.32.86
+ permit 10.122.32.88
+ permit 10.81.59.56
+ permit 10.81.59.57
+ip access-list standard x
+ permit 1.1.1.0 0.0.0.3
+!
+ip access-list extended ACL.CLASSIFIED.DATA.ACCESS.LIST
+ remark ISSP/Interact for Financial Centers
+ permit tcp any any eq 26188
+ permit tcp any any eq 26189
+ permit tcp any eq 26188 any
+ permit tcp any eq 26189 any
+ permit tcp any any eq 35460
+ permit tcp any eq 35460 any
+ip access-list extended LOW.IPP.ACCESS.LIST
+ deny   ip any any dscp cs2
+ permit ip any any precedence priority
+ permit ip any any precedence immediate
+ permit ip any any precedence routine
+ip access-list extended PRE-AUTH
+ remark END STATE 2013-02-28 VER 2
+ permit udp any any eq tftp
+ permit udp any eq bootpc any eq bootps
+ permit udp any any eq domain
+ permit tcp any any established
+ permit icmp any any echo
+ permit icmp any any echo-reply
+ permit icmp any any unreachable
+ permit icmp any any time-exceeded
+ remark DESCR E SUPPORT PORTAL
+ permit tcp any host 10.40.164.180 eq www 8080 8888 443 226 652 653 654 4332 6666
+ permit tcp any host 171.149.195.9 eq www 8080 8888 443 226 652 653 654 4332 6666
+ permit tcp any host 171.149.5.57 eq www 8080 8888 443 226 652 653 654 4332 6666
+ permit tcp any host 10.40.155.138 eq 15001
+ permit tcp any host 171.149.194.139 eq 15001
+ permit tcp any host 171.149.4.82 eq 15001
+ remark DESCR LOCAL MODEL MERLIN SERVER
+ permit tcp any host 171.149.4.82 eq 445
+ permit tcp any host 171.149.4.82 eq 3445
+ permit tcp any host 171.149.4.82 eq 5005
+ permit tcp any host 171.149.4.82 eq 58080
+ permit udp any host 171.149.4.82 range 1024 4999
+ permit tcp any host 171.149.4.82 range 1024 4999
+ permit udp any host 171.149.4.82 eq 6666
+ permit udp any 224.77.0.0 0.0.255.255 eq 6666
+ permit udp any host 171.149.4.82 eq 7777
+ remark TEM APPLICATION FOR MS HOTFIX MGMT
+ permit tcp any any eq 52311
+ remark PXE BAND 7 INSTALLATION SUPPORT
+ permit udp any any eq 4011
+ remark DESCR BOA COE BUILD FOR HP STAFF
+ permit ip any host 171.133.203.243
+ remark BUG CSCTD21945 WORKAROUND FOR IGMP W NAC IN 12253SE1 IOS
+ permit igmp any any
+ remark END STATE 2013-02-28  VER 2
+ip access-list extended PRE-AUTH-CLOSED
+ permit udp any eq bootpc any eq bootps
+ deny   ip any any
+ remark NA3RC Phase2 VER 1
+ip access-list extended y
+!
+ip radius source-interface Loopback0 vrf default
+logging source-interface Loopback0
+logging 1.1.1.10
+logging 1.1.1.11
+access-list 30 permit 2.1.0.0 0.0.255.255
+access-list 33 permit 2.1.0.0 0.0.255.255
+access-list 44 permit 0.0.0.0 255.255.255.252
+access-list 50 permit 1.2.3.4
+access-list 60 permit 10.122.32.86
+access-list 73 permit 1.1.1.1
+access-list 73 permit 1.1.1.2
+access-list 74 permit 0.0.1.1 255.255.0.0
+access-list 97 permit 1.1.1.1
+access-list 97 permit 2.2.2.2
+access-list 97 permit 3.3.3.3
+access-list 98 permit 1.1.1.1
+access-list 98 permit 2.2.2.2
+access-list 98 permit 3.3.3.3
+access-list 98 permit 4.4.4.4
+access-list 99 permit 1.1.1.1
+access-list 99 permit 2.2.2.2
+access-list 99 permit 3.3.3.3
+access-list 99 permit any
+snmp-server user ondevice snmptest v3 
+snmp-server group group1 v3 priv 
+snmp-server group group2 v3 priv notify x 
+snmp-server group snmptest v3 priv notify *tv.FFFFFFFF.FFFFFFFF.FFFFFFFF.FFFFFFFF0F 
+snmp-server group READ-ONLY v3 auth notify *tv.FFFFFFFF.FFFFFFFF.FFFFFFFF.FFFFFFFF0F 
+snmp-server group READ-WRITE v3 auth 
+snmp-server group ciscogroup v3 auth 
+snmp-server community Toronto RO
+snmp-server community Cambridge RW
+snmp-server community ciscodp RW
+snmp-server location Ottawa
+snmp-server contact info@cisco.com
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps entity
+snmp-server enable traps envmon fan shutdown supply temperature status
+snmp-server enable traps config
+snmp-server enable traps hsrp
+snmp-server host 1.1.1.14 version 3 auth READ-ONLY 
+snmp-server host 10.1.1.1 version 3 priv testsnmp 
+snmp ifmib ifindex persist
+tacacs-server host 10.122.32.58 timeout 5
+tacacs-server timeout 20
+tacacs-server directed-request
+tacacs-server key 7 071D741F4D1B1C11
+!
+banner motd ^CRobot Test WithCheck
+^C
+!
+line con 0
+ session-timeout 30 
+ exec-timeout 15 0
+ privilege level 15
+ password 7 04491F163D714E411D
+ login authentication no_tacacs
+line vty 0 4
+ exec-timeout 15 0
+ password 7 071D741F4D1B1C11
+ logging synchronous
+ transport input ssh
+line vty 5 15
+ exec-timeout 15 0
+ password 7 071D741F4D1B1C11
+ logging synchronous
+ transport input ssh
+!
+ntp clock-period 36029126
+ntp server 1.1.1.1 prefer
+ntp server 1.1.1.2 prefer
+netconf ssh
+end

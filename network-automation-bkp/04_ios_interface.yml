@@ -1,0 +1,61 @@
+---
+- name: IOS config using ios_interfaces
+  hosts: all
+  gather_facts: no
+  tasks:
+#    - name: Interface configuration
+#      ios_interfaces:
+#        config:
+#          - name: TenGigabitEthernet1/1/4
+#            description: Ansible configured
+#            enabled: yes
+#            duplex: full
+#            speed: 1000
+#        state: merged
+#      register: int
+  
+#    - debug:
+#        msg: 
+#          - "{{ int.before }}"
+#          - "{{ int.commands }}"
+#          - "{{ int.after }}" 
+
+
+#    - name: Interface configuration
+#      ios_interfaces:
+#        config:
+#          - name: TenGigabitEthernet1/1/4
+#        state: deleted
+#      register: int
+
+#    - debug:
+#        msg:
+#          - "{{ int.commands }}"
+
+
+#    - name: Interface configuration
+#      ios_interfaces:
+#        config:
+#          - name: TenGigabitEthernet1/1/4
+#            eanbled: yes
+#        state: overridden
+
+
+
+    - name: Interface configuration
+      ios_interfaces:
+        config:
+          - name: TenGigabitEthernet1/1/4
+            description: Ansible configured
+            enabled: yes
+            duplex: full
+            speed: 1000
+        state: replaced
+      register: int
+
+    - debug:
+        msg: 
+          - "{{ int.before }}"
+          - "{{ int.commands }}"
+          - "{{ int.after }}" 
+

@@ -1,0 +1,64 @@
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/16, Gi1/0/17, Gi1/0/18, Gi1/0/20, Gi1/0/23, Gi1/1/1, Gi1/1/2, Gi1/1/3, Gi1/1/4, Ap1/0/1
+2    vlan0002                         active    Gi1/0/10
+98   1109_MANAGEMENT_VLAN-98          active    
+99   CloudGenix_ION3K-VLAN-99         active    
+101  testvlan101                      active    
+120  Model-VLAN-120                   active    Gi1/0/13
+130  Second_Model_Bank-VLAN-130       active    
+140  NonModel-VLAN-140                active    Gi1/0/12, Gi1/0/14
+150  ATM-VLAN-150                     active    
+151  ATM-VLAN-151                     active    
+650  Enterprise_Voice-VLAN-650        active    
+690  ML-Satellite-VLAN-690            active    
+702  Voice-VLAN-702                   active    
+799  Voice_Unused_Ports-VLAN-799      active    Gi1/0/1, Gi1/0/2, Gi1/0/3, Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/11, Gi1/0/12, Gi1/0/13, Gi1/0/19, Gi1/0/21
+801  Voice-VLAN-801                   active    Gi1/0/14
+802  Voice-VLAN-802                   active    
+950  Video-VLAN-950                   active    
+999  Data-Unused-Ports-VLAN-999       active    Gi1/0/1, Gi1/0/2, Gi1/0/3, Gi1/0/4, Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8, Gi1/0/9, Gi1/0/11, Gi1/0/19, Gi1/0/21
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+1901 Wireless-VLAN-1901               active    
+1947 WLAN-iAP-VoIP-1947               active    
+1948 WLAN-iAP-User-1948               active    
+1949 WLAN-iAP-MGMT-1949               active    
+
+VLAN Type  SAID       MTU   Parent RingNo BridgeNo Stp  BrdgMode Trans1 Trans2
+---- ----- ---------- ----- ------ ------ -------- ---- -------- ------ ------
+1    enet  100001     1500  -      -      -        -    -        0      0   
+2    enet  100002     1500  -      -      -        -    -        0      0   
+98   enet  100098     1500  -      -      -        -    -        0      0   
+99   enet  100099     1500  -      -      -        -    -        0      0   
+101  enet  100101     1500  -      -      -        -    -        0      0   
+120  enet  100120     1500  -      -      -        -    -        0      0   
+130  enet  100130     1500  -      -      -        -    -        0      0   
+140  enet  100140     1500  -      -      -        -    -        0      0   
+150  enet  100150     1500  -      -      -        -    -        0      0   
+151  enet  100151     1500  -      -      -        -    -        0      0   
+650  enet  100650     1500  -      -      -        -    -        0      0   
+690  enet  100690     1500  -      -      -        -    -        0      0   
+702  enet  100702     1500  -      -      -        -    -        0      0   
+799  enet  100799     1500  -      -      -        -    -        0      0   
+801  enet  100801     1500  -      -      -        -    -        0      0   
+802  enet  100802     1500  -      -      -        -    -        0      0   
+950  enet  100950     1500  -      -      -        -    -        0      0   
+999  enet  100999     1500  -      -      -        -    -        0      0   
+1002 fddi  101002     1500  -      -      -        -    -        0      0   
+1003 tr    101003     1500  -      -      -        -    -        0      0   
+1004 fdnet 101004     1500  -      -      -        ieee -        0      0   
+1005 trnet 101005     1500  -      -      -        ibm  -        0      0   
+1901 enet  101901     1500  -      -      -        -    -        0      0   
+1947 enet  101947     1500  -      -      -        -    -        0      0   
+1948 enet  101948     1500  -      -      -        -    -        0      0   
+1949 enet  101949     1500  -      -      -        -    -        0      0   
+
+Remote SPAN VLANs
+------------------------------------------------------------------------------
+
+
+Primary Secondary Type              Ports
+------- --------- ----------------- ------------------------------------------

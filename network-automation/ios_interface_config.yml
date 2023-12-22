@@ -1,0 +1,80 @@
+---
+- name: Configuring VLANs
+  hosts: all
+  gather_facts: no
+  vars:
+    ansible_connection_timeout: 60
+    interfaces:
+      - {"type":"GigabitEthernet","id":"1/1/2"}
+      - {"type":"GigabitEthernet","id":"1/1/3"}
+      - {"type":"GigabitEthernet","id":"1/0/9"}
+      - {"type":"TenGigabitEthernet","id":"1/1/7"}
+  
+  pre_tasks:
+    - name: check if interface directory exists
+      stat:
+        path: /home/vagrant/vprofile/network-automation/config/interface
+      register: dir_check
+    
+    - name: create dir if it does not exist
+      file:
+        path: /home/vagrant/vprofile/network-automation/config/interface
+        state: directory
+      when: not dir_check.stat.exists
+
+  tasks:
+    - name: Get initial config of the interface
+      cisco.ios.ios_command:
+        commands:
+          - "show running-config interface {{ item['type'] }} {{ item['id'] }}"
+        retries: 3
+        interval: 30
+      ignore_errors: true
+      with_items: "{{ interfaces }}"
+      register: interfaces_config
+
+    - name: Backup initial config of the interfaces to local storage
+      ansible.builtin.copy:
+        content: "{{ item.stdout[0] | regex_findall('(?=interface)(?s)(.*$)', multiline=True) | join(', ') }}"
+        dest: "/home/vagrant/vprofile/network-automation/config/interface/bkp_before_{{ inventory_hostname }}_{{ item.item.type }}_{{ item.item.id | replace('/', '_') }}.txt"
+      with_items: "{{ interfaces_config.results }}"
+
+    - name: Config to be pushed to device
+      template:
+        src: "interface_configuration.j2"
+        dest: "/home/vagrant/vprofile/network-automation/config/interface_config_{{ inventory_hostname }}.txt"
+
+#    - name: Read interface configurations from file
+#      slurp:
+#        src: "/home/vagrant/vprofile/network-automation/config/interface_config_{{ inventory_hostname }}.txt"
+#      register: interface_file_content
+
+#    - name: print interface result
+#      debug:
+#        var: interface_file_content
+
+    - name: Apply configurations to IOS devices
+      ios_config:
+        src: "/home/vagrant/vprofile/network-automation/config/interface_config_{{ inventory_hostname }}.txt"
+        diff_against: "running"
+
+#    - name: Push configurations for interfaces to the devices
+#      cisco.ios.ios_config:
+#        src: "/home/vagrant/vprofile/network-automation/config/interface_config_{{ inventory_hostname }}.txt" 
+
+    - name: Get final config of the interface
+      cisco.ios.ios_command:
+        commands:
+          - "show running-config interface {{ item['type'] }} {{ item['id'] }}"
+        retries: 3
+        interval: 30
+      ignore_errors: true
+      with_items: "{{ interfaces }}"
+      register: interfaces_config
+
+    - name: Backup final config of the interfaces to local storage
+      copy:
+        content: "{{ item.stdout[0] | regex_findall('(?=interface)(?s)(.*$)', multiline=True) | join(', ') }}"
+        dest: "/home/vagrant/vprofile/network-automation/config/interface/bkp_after_{{ inventory_hostname }}_{{ item.item.type }}_{{ item.item.id | replace('/', '_') }}.txt"
+      with_items: "{{ interfaces_config.results }}"
+

@@ -1,0 +1,43 @@
+{% for interface in interfaces %}
+{% if interface['type'] == 'GigabitEthernet' %}
+interface GigabitEthernet{{ interface['id'] }}
+ description NXC {{ now().strftime('%Y-%m-%d') }} {{ now().strftime('%Y-%m-%d') }}
+ switchport access vlan 999
+ switchport mode access
+ switchport voice vlan 799
+ ip access-group PRE-AUTH-CLOSED in
+ load-interval 30
+ shutdown
+ authentication control-direction in
+ authentication event server dead action authorize vlan 999
+ authentication event server dead action authorize voice
+ authentication event server alive action reinitialize
+ authentication host-mode multi-domain
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ snmp trap mac-notification change added
+ snmp trap mac-notification change removed
+ no snmp trap link-status
+ dot1x pae authenticator
+ dot1x timeout tx-period 2
+ spanning-tree portfast
+ service-policy input USER.INGRESS.0420
+{% endif %}
+{% if interface['type'] == 'TenGigabitEthernet' %}
+interface TenGigabitEthernet{{ interface['id'] }}
+ description USxxxxxxxxxxFAPxxxx or MAPxxxx
+ switchport trunk native vlan 1901
+ switchport trunk allowed vlan 1901
+ switchport mode trunk
+ load-interval 30
+ no snmp trap link-status
+ spanning-tree portfast trunk
+ service-policy input UPLINK.INPUT.POLICY.0420
+ service-policy output UPLINK.OUTPUT.POLICY.0420
+{% endif %}
+{% endfor %}

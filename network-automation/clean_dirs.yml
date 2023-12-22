@@ -1,0 +1,17 @@
+---
+- name: clean directory and sub directory
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Find all files in dir and sub dir
+      ansible.builtin.find:
+        paths: /home/vagrant/vprofile/network-automation/config
+        file_type: file
+        recurse: yes
+      register: files
+
+    - name: remove files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ files.files }}"
